@@ -1,54 +1,64 @@
 import { useState } from "react";
-import { THEME } from "../styles/theme";
+import { Link } from "react-router-dom";
 import { FEATURES } from "../data/features";
 import LearnHowModal from "./LearnHowModal";
-import openDoorIcon from "../assets/icons/open-door.svg";
 
-export default function LandingPage({ onStart, onSignin }) {
+export default function LandingPage({ onStart }) {
   const [activeFeature, setActiveFeature] = useState(null);
 
   return (
     <>
       {/* HERO */}
-      <section className="hero">
-        <div className="hero-bg" />
-        <div className="hero-blob" style={{ width: 400, height: 400, background: THEME.sageLight, top: "10%", right: "5%" }} />
-        <div className="hero-blob" style={{ width: 250, height: 250, background: THEME.dustyRose, bottom: "15%", right: "25%" }} />
-        <div className="hero-content">
-          <img src={openDoorIcon} alt="" style={{ width: 72, height: "auto", marginBottom: 24, opacity: 0.92 }} />
-          <div className="hero-tag">A safe space to heal & grow</div>
-          <h1 className="hero-title">
-            Your healing<br />journey starts<br /><em>here.</em>
+      <section style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        padding: "120px 48px 80px",
+        background: "#f4ede3",
+      }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", width: "100%" }}>
+          <div style={{
+            fontSize: 11,
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            color: "#c4623a",
+            marginBottom: 24,
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 400,
+          }}>
+            Take the first step today
+          </div>
+          <h1 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(52px, 7.5vw, 104px)",
+            fontWeight: 300,
+            lineHeight: 1.05,
+            color: "#2a1e18",
+            marginBottom: 36,
+            letterSpacing: "-1px",
+          }}>
+            Walk your grief.<br />
+            Feel whole again.<br />
+            <em style={{ fontStyle: "italic", color: "#c4623a" }}>Rebuild.</em>
           </h1>
-          <p className="hero-sub">
-            Separation and divorce are some of life's hardest transitions. We walk with you — with compassion, community, and expert guidance — toward a life that feels whole again.
+          <p style={{
+            fontSize: 18,
+            lineHeight: 1.75,
+            color: "#5a4a3a",
+            marginBottom: 52,
+            fontWeight: 300,
+            maxWidth: 520,
+          }}>
+            Broken relationships hurt the same as death. But they cannot be told. This is your place to heal and grieve — out loud, without judgement.
           </p>
-          <div className="hero-ctas">
-            <button className="btn-primary" onClick={onStart}>Begin Your Journey →</button>
-            <button className="btn-secondary" onClick={onSignin}>I have an account</button>
-          </div>
-          <div className="hero-stats">
-            <div className="stat-item">
-              <div className="stat-num">4,200+</div>
-              <div className="stat-label">Lives touched</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-num">96%</div>
-              <div className="stat-label">Feel less alone</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-num">120+</div>
-              <div className="stat-label">Events hosted</div>
-            </div>
-          </div>
+          <button className="btn-primary" onClick={onStart}>
+            Begin Your Journey →
+          </button>
         </div>
       </section>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "0 48px" }}>
-        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
-        <img src={openDoorIcon} alt="" style={{ width: 28, height: "auto", opacity: 0.35 }} />
-        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
-      </div>
+      {/* Divider */}
+      <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
 
       {/* MISSION */}
       <section className="section" style={{ background: "white" }}>
@@ -56,7 +66,10 @@ export default function LandingPage({ onStart, onSignin }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
             <div>
               <div className="section-tag">Our Mission</div>
-              <h2 className="section-title">You're not starting over.<br />You're starting <em style={{ fontStyle: "italic", color: THEME.sage }}>fresh.</em></h2>
+              <h2 className="section-title">
+                You're not starting over.<br />
+                You're starting <em style={{ fontStyle: "italic", color: "#c4623a" }}>fresh.</em>
+              </h2>
               <p className="section-sub">
                 We believe that the end of a relationship is not the end of your story. It's a profound, painful transition — and also an invitation to know yourself more deeply and live more authentically. From Broken to Better exists to walk with you through every step of that transformation.
               </p>
@@ -66,13 +79,18 @@ export default function LandingPage({ onStart, onSignin }) {
                 "Judgment-free space to process and grieve",
                 "AI-personalized healing paths based on your needs",
                 "Evidence-based workshops and expert-led sessions",
-                "A warm, supportive community of people who understand"
+                "A warm, supportive community of people who understand",
               ].map((t, i) => (
                 <div key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-                  <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(124,158,142,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
-                    <span style={{ fontSize: 14, color: THEME.sage }}>✓</span>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: "50%",
+                    background: "rgba(196,98,58,0.1)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    flexShrink: 0, marginTop: 2,
+                  }}>
+                    <span style={{ fontSize: 14, color: "#c4623a" }}>✓</span>
                   </div>
-                  <p style={{ fontSize: 15, color: THEME.textMid, lineHeight: 1.6 }}>{t}</p>
+                  <p style={{ fontSize: 15, color: "#5a5a5a", lineHeight: 1.6 }}>{t}</p>
                 </div>
               ))}
             </div>
@@ -80,18 +98,17 @@ export default function LandingPage({ onStart, onSignin }) {
         </div>
       </section>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "0 48px" }}>
-        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
-        <img src={openDoorIcon} alt="" style={{ width: 28, height: "auto", opacity: 0.35 }} />
-        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
-      </div>
+      {/* Divider */}
+      <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
 
       {/* HOW IT WORKS */}
       <section className="section">
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 60 }}>
             <div className="section-tag" style={{ display: "inline-block" }}>How It Works</div>
-            <h2 className="section-title" style={{ maxWidth: 500, margin: "0 auto" }}>A thoughtful approach to your healing</h2>
+            <h2 className="section-title" style={{ maxWidth: 500, margin: "0 auto" }}>
+              A thoughtful approach to your healing
+            </h2>
           </div>
           <div className="features-grid">
             {FEATURES.map((f, i) => (
@@ -101,14 +118,21 @@ export default function LandingPage({ onStart, onSignin }) {
                 <div className="feature-desc">{f.desc}</div>
                 <button
                   onClick={() => setActiveFeature(f)}
-                 style={{ marginTop: 16, fontSize: 13, padding: "10px 20px" }}
-                  /*</div>  marginTop: 16, background: "none",
-                    border: "1.5px solid rgba(124,158,142,0.3)",
-                    borderRadius: 100, padding: "8px 18px",
-                    fontSize: 13, color: THEME.sageDark,
-                    cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 500, transition: "all 0.2s",
-                  }}</div>*/
+                  style={{
+                    marginTop: 20,
+                    background: "#c4623a",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 100,
+                    padding: "10px 22px",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    fontFamily: "'DM Sans', sans-serif",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = "#9e4828"}
+                  onMouseLeave={e => e.currentTarget.style.background = "#c4623a"}
                 >
                   Learn How
                 </button>
@@ -118,17 +142,81 @@ export default function LandingPage({ onStart, onSignin }) {
         </div>
       </section>
 
+      {/* FIND YOUR PEER */}
+      <section style={{ background: "#1c1410", padding: "96px 48px", textAlign: "center" }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{
+            fontSize: 11,
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            color: "#c4623a",
+            marginBottom: 20,
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
+            Meet Your Peer
+          </div>
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(32px, 4vw, 52px)",
+            fontWeight: 300,
+            color: "#f4ede3",
+            lineHeight: 1.25,
+            marginBottom: 24,
+          }}>
+            You are not alone. Many walked the grief, many perished — meet somebody who survived.
+          </h2>
+          <p style={{
+            fontSize: 16,
+            color: "rgba(244,237,227,0.6)",
+            marginBottom: 44,
+            lineHeight: 1.75,
+            fontWeight: 300,
+          }}>
+            Not a therapist. Not advice. A real person who went through a separation just like yours.
+          </p>
+          <Link
+            to="/meet-your-peer"
+            style={{
+              display: "inline-block",
+              background: "#c4623a",
+              color: "white",
+              borderRadius: 100,
+              padding: "16px 40px",
+              fontSize: 15,
+              fontWeight: 500,
+              textDecoration: "none",
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "#9e4828"}
+            onMouseLeave={e => e.currentTarget.style.background = "#c4623a"}
+          >
+            Find My Peer →
+          </Link>
+        </div>
+      </section>
+
       {/* CTA BANNER */}
-      <section style={{ padding: "80px 48px", background: "linear-gradient(135deg, #5A7A6A 0%, #7C9E8E 100%)", textAlign: "center" }}>
+      <section style={{ padding: "80px 48px", background: "#c4623a", textAlign: "center" }}>
         <div style={{ maxWidth: 560, margin: "0 auto" }}>
-          <img src={openDoorIcon} alt="" style={{ width: 64, height: "auto", marginBottom: 28, opacity: 0.85, filter: "brightness(0) invert(1)" }} />
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(36px,4vw,52px)", fontWeight: 300, color: "white", marginBottom: 20, lineHeight: 1.2 }}>
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(36px,4vw,52px)",
+            fontWeight: 300,
+            color: "white",
+            marginBottom: 20,
+            lineHeight: 1.2,
+          }}>
             You deserve to feel whole again.
           </h2>
-          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.8)", marginBottom: 40, lineHeight: 1.7 }}>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", marginBottom: 40, lineHeight: 1.7 }}>
             Take the first step today. It only takes a few minutes to receive your personalized healing path.
           </p>
-          <button className="btn-primary" onClick={onStart} style={{ background: "white", color: "#5A7A6A", boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}>
+          <button
+            className="btn-primary"
+            onClick={onStart}
+            style={{ background: "white", color: "#c4623a", boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
+          >
             Start for Free — No Credit Card Needed
           </button>
         </div>

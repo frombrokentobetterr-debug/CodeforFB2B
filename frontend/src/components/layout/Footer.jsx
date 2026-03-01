@@ -1,161 +1,141 @@
-import openDoorIcon from '../../assets/icons/open-door.svg';
+import { Link } from "react-router-dom";
 
-const PALETTE = {
-  bg:         "#1e1a17",   // deep charcoal — grounded, darker than page body
-  border:     "rgba(255,255,255,0.08)",
-  cream:      "#f4ede3",
-  sage:       "#7a9e87",
-  terracotta: "#c4623a",
-  muted:      "rgba(244,237,227,0.5)",
-};
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
 
-const NAV_LINKS = [
-  { label: "About",          page: "about"   },
-  { label: "Events",         page: "events"  },
-  { label: "Journal",        page: "blog"    },
-  { label: "Privacy Policy", page: "privacy" },
-  { label: "Terms",          page: "terms"   },
-];
+  .footer {
+    background: #1c1410;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    color: #a09080;
+  }
 
-export default function Footer({ setPage, onStart }) {
+  .footer-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 32px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 48px;
+  }
+
+  .footer-brand .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: #e8ddd0;
+    margin-bottom: 8px;
+  }
+
+  .footer-brand .wordmark span { color: #c4623a; }
+
+  .footer-brand .tagline {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #6a5a50;
+  }
+
+  .footer-cta {
+    display: inline-block;
+    border: 1px solid #3a2e28;
+    color: #a09080;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    border-radius: 40px;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+
+  .footer-cta:hover { border-color: #c4623a; color: #e8ddd0; }
+
+  .footer-divider {
+    border: none;
+    border-top: 1px solid #2a2018;
+    margin: 0 32px;
+  }
+
+  .footer-bottom {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .footer-nav a {
+    font-size: 12px;
+    color: #6a5a50;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+
+  .footer-nav a:hover { color: #c4623a; }
+
+  .footer-copy {
+    font-size: 11px;
+    color: #4a3e38;
+    letter-spacing: 0.05em;
+  }
+
+  .footer-made {
+    font-size: 11px;
+    color: #4a3e38;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .footer-main { grid-template-columns: 1fr; gap: 28px; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; }
+  }
+`;
+
+export default function Footer() {
   return (
-    <footer style={{
-      background: PALETTE.bg,
-      color: PALETTE.cream,
-      padding: "64px 48px 40px",
-      marginTop: "auto",
-    }}>
-      <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-
-        {/* ── Top row: brand + CTA ── */}
-        <div style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 40,
-          paddingBottom: 40,
-          borderBottom: `1px solid ${PALETTE.border}`,
-        }}>
-          {/* Brand block */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <img
-                src={openDoorIcon}
-                alt=""
-                style={{ height: 28, width: "auto", filter: "brightness(0) invert(1)", opacity: 0.9 }}
-              />
-              <span style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: 18,
-                fontWeight: 600,
-                color: PALETTE.cream,
-                letterSpacing: "-0.2px",
-              }}>
-                From <span style={{ color: PALETTE.terracotta }}>Broken</span> to Better
-              </span>
-            </div>
-            <p style={{
-              fontSize: 13,
-              color: PALETTE.muted,
-              letterSpacing: "0.6px",
-              textTransform: "uppercase",
-              fontWeight: 400,
-              margin: 0,
-            }}>
-              Walk your grief. Rebuild.
-            </p>
+    <>
+      <style>{styles}</style>
+      <footer className="footer">
+        <div className="footer-main">
+          <div className="footer-brand">
+            <div className="wordmark">From <span>Broken</span> to Better</div>
+            <div className="tagline">Walk your grief. Rebuild.</div>
           </div>
-
-          {/* CTA */}
-          <button
-            onClick={onStart}
-            style={{
-              background: "transparent",
-              border: `1.5px solid ${PALETTE.sage}`,
-              borderRadius: 100,
-              padding: "12px 28px",
-              fontSize: 14,
-              fontWeight: 500,
-              color: PALETTE.sage,
-              cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              transition: "all 0.2s",
-              whiteSpace: "nowrap",
-              alignSelf: "center",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = PALETTE.sage;
-              e.currentTarget.style.color = "#1e1a17";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = PALETTE.sage;
-            }}
-          >
-            Begin Your Journey →
-          </button>
+          <Link to="/register" className="footer-cta">Begin Your Journey →</Link>
         </div>
 
-        {/* ── Nav links row ── */}
-        <nav style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "12px 32px",
-          padding: "32px 0",
-          borderBottom: `1px solid ${PALETTE.border}`,
-        }}>
-          {NAV_LINKS.map(({ label, page }) => (
-            <button
-              key={page}
-              onClick={() => setPage?.(page)}
-              style={{
-                background: "none",
-                border: "none",
-                padding: 0,
-                fontSize: 14,
-                color: PALETTE.muted,
-                cursor: "pointer",
-                fontFamily: "'DM Sans', sans-serif",
-                transition: "color 0.2s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = PALETTE.cream; }}
-              onMouseLeave={e => { e.currentTarget.style.color = PALETTE.muted; }}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
+        <hr className="footer-divider" />
 
-        {/* ── Copyright row ── */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 12,
-          paddingTop: 28,
-        }}>
-          <p style={{ margin: 0, fontSize: 13, color: PALETTE.muted }}>
-            © {new Date().getFullYear()} From Broken to Better. All rights reserved.
-          </p>
-          <p style={{ margin: 0, fontSize: 12, color: "rgba(244,237,227,0.25)" }}>
-            Made with care for those who are healing.
-          </p>
+        <div className="footer-bottom">
+          <nav className="footer-nav">
+            <Link to="/about">About</Link>
+            <Link to="/events">Events</Link>
+            <Link to="/journal">Journal</Link>
+            <Link to="/meet-your-peer">Meet Your Peer</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/terms">Terms</Link>
+          </nav>
+          <div className="footer-copy">© 2026 From Broken to Better. All rights reserved.</div>
+          <div className="footer-made">Made with care for those who are healing.</div>
         </div>
-
-      </div>
-
-      {/* Responsive styles */}
-      <style>{`
-        @media (max-width: 600px) {
-          footer { padding: 48px 24px 32px !important; }
-          footer > div > div:first-child {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-        }
-      `}</style>
-    </footer>
+      </footer>
+    </>
   );
 }

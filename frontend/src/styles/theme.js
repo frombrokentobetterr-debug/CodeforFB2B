@@ -55,12 +55,12 @@ export const globalCSS = `
   }
   .nav-link:hover { color: ${THEME.sageDark}; }
   .nav-btn {
-    background: ${THEME.sage}; color: white;
+    background: #c4623a; color: white;
     border: none; border-radius: 100px;
     padding: 10px 24px; font-size: 14px; font-weight: 500;
     cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
   }
-  .nav-btn:hover { background: ${THEME.sageDark}; transform: translateY(-1px); }
+  .nav-btn:hover { background: #9e4828; transform: translateY(-1px); }
 
   /* HERO */
   .hero {
@@ -98,20 +98,20 @@ export const globalCSS = `
   }
   .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
   .btn-primary {
-    background: ${THEME.sage}; color: white;
+    background: #c4623a; color: white;
     border: none; border-radius: 100px;
     padding: 16px 36px; font-size: 15px; font-weight: 500;
     cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif;
-    box-shadow: 0 4px 20px rgba(124,158,142,0.3);
+    box-shadow: 0 4px 20px rgba(196,98,58,0.3);
   }
-  .btn-primary:hover { background: ${THEME.sageDark}; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,158,142,0.4); }
+  .btn-primary:hover { background: #9e4828; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(196,98,58,0.4); }
   .btn-secondary {
     background: transparent; color: ${THEME.textDark};
     border: 1.5px solid rgba(44,44,44,0.2); border-radius: 100px;
     padding: 16px 36px; font-size: 15px; font-weight: 500;
     cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif;
   }
-  .btn-secondary:hover { border-color: ${THEME.sage}; color: ${THEME.sage}; }
+  .btn-secondary:hover { border-color: #c4623a; color: #c4623a; }
   .hero-stats { display: flex; gap: 48px; margin-top: 64px; justify-content: center; }
   .stat-num {
     font-family: 'Cormorant Garamond', serif;
@@ -185,15 +185,15 @@ export const globalCSS = `
   .form-input:focus { border-color: ${THEME.sage}; box-shadow: 0 0 0 3px rgba(124,158,142,0.15); }
   .form-btn {
     width: 100%; padding: 16px;
-    background: ${THEME.sage}; color: white;
+    background: #c4623a; color: white;
     border: none; border-radius: 12px;
     font-size: 16px; font-weight: 500; font-family: 'DM Sans', sans-serif;
     cursor: pointer; transition: all 0.2s; margin-top: 8px;
   }
-  .form-btn:hover { background: ${THEME.sageDark}; }
+  .form-btn:hover { background: #9e4828; }
   .form-btn:disabled { opacity: 0.6; cursor: not-allowed; }
   .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: ${THEME.textLight}; }
-  .auth-switch button { color: ${THEME.sage}; background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 500; }
+  .auth-switch button { color: #c4623a; background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 500; }
   .error-msg { color: #E57373; font-size: 13px; margin-top: 8px; }
 
   /* ONBOARDING */
@@ -232,11 +232,11 @@ export const globalCSS = `
   .q-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 36px; }
   .q-back { background: none; border: none; color: ${THEME.textLight}; cursor: pointer; font-size: 14px; font-family: 'DM Sans', sans-serif; }
   .q-next {
-    background: ${THEME.sage}; color: white; border: none; border-radius: 100px;
+    background: #c4623a; color: white; border: none; border-radius: 100px;
     padding: 14px 32px; font-size: 15px; font-weight: 500;
     cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
   }
-  .q-next:hover { background: ${THEME.sageDark}; }
+  .q-next:hover { background: #9e4828; }
   .q-next:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* GENERATING */
@@ -272,10 +272,10 @@ export const globalCSS = `
   .dash-card-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
   .dash-card-desc { font-size: 14px; color: ${THEME.textMid}; line-height: 1.6; margin-bottom: 20px; }
   .card-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-  .card-btn-primary { background: ${THEME.sage}; color: white; }
-  .card-btn-primary:hover { background: ${THEME.sageDark}; transform: translateY(-1px); }
+  .card-btn-primary { background: #c4623a; color: white; }
+  .card-btn-primary:hover { background: #9e4828; transform: translateY(-1px); }
   .card-btn-outline { background: transparent; color: ${THEME.textDark}; border: 1.5px solid rgba(0,0,0,0.15); }
-  .card-btn-outline:hover { border-color: ${THEME.sage}; color: ${THEME.sage}; }
+  .card-btn-outline:hover { border-color: #c4623a; color: #c4623a; }
   .card-btn-rose { background: ${THEME.dustyRose}; color: white; }
   .card-btn-rose:hover { background: ${THEME.roseDark}; transform: translateY(-1px); }
   .focus-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
@@ -314,8 +314,8 @@ export const globalCSS = `
   .stripe-badge { background: ${THEME.sand}; border-radius: 8px; padding: 6px 12px; font-size: 12px; color: ${THEME.textMid}; font-weight: 500; }
   .modal-btns { display: flex; gap: 12px; margin-top: 24px; }
   .modal-cancel { flex: 1; padding: 14px; border-radius: 12px; border: 1.5px solid rgba(0,0,0,0.1); background: transparent; font-size: 15px; cursor: pointer; font-family: 'DM Sans', sans-serif; color: ${THEME.textMid}; }
-  .modal-pay { flex: 2; padding: 14px; border-radius: 12px; background: ${THEME.sage}; color: white; border: none; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-  .modal-pay:hover { background: ${THEME.sageDark}; }
+  .modal-pay { flex: 2; padding: 14px; border-radius: 12px; background: #c4623a; color: white; border: none; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .modal-pay:hover { background: #9e4828; }
   .modal-pay:disabled { opacity: 0.6; cursor: not-allowed; }
   .success-box { text-align: center; padding: 40px 20px; }
   .success-icon { font-size: 56px; margin-bottom: 20px; }
