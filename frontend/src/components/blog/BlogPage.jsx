@@ -5,10 +5,7 @@ export default function BlogPage({ onReadArticle }) {
     <div className="blog-page">
       <div className="blog-header">
         <div className="section-tag">Healing Journal</div>
-        <h1 className="section-title">Articles & Insights</h1>
-        <p className="section-sub" style={{ margin: "0 auto", textAlign: "center" }}>
-          Expert-written guides to support every stage of your healing journey.
-        </p>
+        <h1 className="section-title">The Journey</h1>
       </div>
       <div className="blog-grid">
         {ARTICLES.map(article => (

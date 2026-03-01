@@ -25,7 +25,7 @@ const styles = `
 
   .nav-logo {
     flex-shrink: 0;
-    margin-right: 40px;
+    margin-right: auto;
     position: relative;
     z-index: 2;
     font-family: 'Cormorant Garamond', serif;

@@ -15,6 +15,7 @@ export default function LandingPage({ onStart }) {
         alignItems: "center",
         padding: "120px 80px 80px",
         background: "#f4ede3",
+        textAlign: "center",
       }}>
         <div style={{ width: "100%" }}>
           <div style={{
@@ -48,6 +49,7 @@ export default function LandingPage({ onStart }) {
             marginBottom: 52,
             fontWeight: 300,
             maxWidth: 560,
+            margin: "0 auto 52px",
           }}>
             Broken relationships hurt the same as death. But they cannot be told. This is your place to heal and grieve — out loud, without judgement.
           </p>

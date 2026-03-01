@@ -9,7 +9,7 @@ const styles = `
     min-height: 100vh;
     background: #f4ede3;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 100px 24px 60px;
   }
@@ -19,7 +19,7 @@ const styles = `
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 480px;
+    max-width: 520px;
   }
 
   .auth-pg-brand {
@@ -77,28 +77,47 @@ const styles = `
     line-height: 1.5;
   }
 
+  .auth-pg-field-note {
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #a09080;
+    line-height: 1.7;
+    margin-top: 8px;
+  }
+
+  .auth-pg-textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    background: #faf7f2;
+    color: #2a1e18;
+    resize: vertical;
+    min-height: 110px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+
+  .auth-pg-textarea:focus { border-color: #c4623a; }
+
   .auth-pg-divider {
     height: 1px;
     background: #ede3d8;
     margin: 28px 0;
   }
 
-  .auth-pg-footer {
+  .auth-pg-footer-text {
     text-align: center;
-    margin-top: 24px;
     font-family: 'Jost', sans-serif;
     font-size: 13px;
     font-weight: 300;
     color: #8a7a70;
   }
-
-  .auth-pg-footer a {
-    color: #8a7a70;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .auth-pg-footer a:hover { color: #c4623a; }
 
   .auth-pg-switch {
     display: inline;
@@ -112,39 +131,80 @@ const styles = `
     padding: 0;
   }
 
-  @media (max-width: 520px) {
+  .auth-pg-back {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #8a7a70;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+
+  .auth-pg-back:hover { color: #c4623a; }
+
+  .auth-pg-opt {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    color: #a09080;
+    margin-left: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 560px) {
     .auth-pg-card { padding: 40px 28px; }
   }
 `;
 
 export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB }) {
-  const [mode, setMode]       = useState(initialMode);
-  const [name, setName]       = useState("");
-  const [email, setEmail]     = useState("");
-  const [password, setPassword] = useState("");
+  const [mode, setMode] = useState(initialMode);
+
+  // Signup fields
+  const [fullName, setFullName]   = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [phone, setPhone]         = useState("");
+  const [story, setStory]         = useState("");
+
+  // Login fields
+  const [loginEmail, setLoginEmail]       = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
   const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
 
-  const switchMode = (next) => { setMode(next); setError(""); setName(""); setEmail(""); setPassword(""); };
+  const switchMode = (next) => {
+    setMode(next);
+    setError("");
+    setFullName(""); setSignupEmail(""); setPhone(""); setStory("");
+    setLoginEmail(""); setLoginPassword("");
+  };
 
   const handleSubmit = async () => {
-    if (!email || !password) { setError("Please fill in all fields."); return; }
-    if (mode === "signup" && !name) { setError("Please enter your name."); return; }
-    setLoading(true); setError("");
-    await new Promise(r => setTimeout(r, 700));
+    setError("");
 
     if (mode === "login") {
-      const existing = mockDB.users[email];
-      if (!existing || existing.password !== password) {
+      if (!loginEmail || !loginPassword) { setError("Please fill in all fields."); return; }
+      setLoading(true);
+      await new Promise(r => setTimeout(r, 700));
+      const existing = mockDB.users[loginEmail];
+      if (!existing || (existing.password && existing.password !== loginPassword)) {
         setError("Invalid email or password."); setLoading(false); return;
       }
       onLogin(existing);
     } else {
-      if (mockDB.users[email]) {
-        setError("An account with this email already exists."); setLoading(false); return;
-      }
-      onSignup({ name, email, password, createdAt: new Date().toISOString() });
+      if (!fullName.trim()) { setError("Please enter your full name."); return; }
+      if (!signupEmail.trim()) { setError("Please enter your email address."); return; }
+      if (!/\S+@\S+\.\S+/.test(signupEmail)) { setError("Please enter a valid email address."); return; }
+      if (mockDB.users[signupEmail]) { setError("An account with this email already exists."); return; }
+      setLoading(true);
+      await new Promise(r => setTimeout(r, 700));
+      onSignup({ name: fullName, email: signupEmail, phone, story, createdAt: new Date().toISOString() });
     }
+
     setLoading(false);
   };
 
@@ -174,44 +234,93 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB 
             </h1>
             <p className="auth-pg-sub">
               {mode === "signup"
-                ? "Create your free account to start your healing journey."
+                ? "Tell us a little about yourself to get started."
                 : "Continue your journey from where you left off."}
             </p>
 
+            {/* ── SIGNUP FIELDS ── */}
             {mode === "signup" && (
-              <div className="form-group">
-                <label className="form-label">Your first name</label>
-                <input
-                  className="form-input"
-                  placeholder="e.g. Anika"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                />
-              </div>
+              <>
+                <div className="form-group">
+                  <label className="form-label">
+                    Full Name <span style={{ color: "#c4623a" }}>*</span>
+                  </label>
+                  <input
+                    className="form-input"
+                    placeholder="Your full name"
+                    value={fullName}
+                    onChange={e => setFullName(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Email Address <span style={{ color: "#c4623a" }}>*</span>
+                  </label>
+                  <input
+                    className="form-input"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={signupEmail}
+                    onChange={e => setSignupEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Phone Number <span className="auth-pg-opt">(optional)</span>
+                  </label>
+                  <input
+                    className="form-input"
+                    type="tel"
+                    placeholder="+91 98765 43210"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">What is hurting you right now?</label>
+                  <textarea
+                    className="auth-pg-textarea"
+                    placeholder="There is no right way to say it. Just write what you are feeling, or leave blank if you feel so.."
+                    value={story}
+                    onChange={e => setStory(e.target.value)}
+                    rows={4}
+                  />
+                  <p className="auth-pg-field-note">
+                    We ask because healing is not one-size-fits-all. The more you share, the better we can match you with the right peer, the right practitioner, and the right path. Your story stays private — always.
+                  </p>
+                </div>
+              </>
             )}
 
-            <div className="form-group">
-              <label className="form-label">Email address</label>
-              <input
-                className="form-input"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSubmit()}
-              />
-            </div>
+            {/* ── LOGIN FIELDS ── */}
+            {mode === "login" && (
+              <>
+                <div className="form-group">
+                  <label className="form-label">Email Address</label>
+                  <input
+                    className="form-input"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={loginEmail}
+                    onChange={e => setLoginEmail(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Password</label>
+                  <input
+                    className="form-input"
+                    type="password"
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={e => setLoginPassword(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleSubmit()}
+                  />
+                </div>
+              </>
+            )}
 
             {error && <p className="error-msg">{error}</p>}
 
@@ -219,18 +328,18 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB 
               className="form-btn"
               onClick={handleSubmit}
               disabled={loading}
-              style={{ marginTop: 4 }}
+              style={{ marginTop: 8 }}
             >
               {loading
                 ? "Please wait…"
                 : mode === "signup"
-                  ? "Create My Account →"
+                  ? "Begin My Journey →"
                   : "Sign In →"}
             </button>
 
             <div className="auth-pg-divider" />
 
-            <p className="auth-pg-footer">
+            <p className="auth-pg-footer-text">
               {mode === "signup" ? "Already have an account? " : "New here? "}
               <button
                 className="auth-pg-switch"
@@ -241,12 +350,7 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB 
             </p>
           </div>
 
-          {/* Back link */}
-          <div style={{ marginTop: 20 }}>
-            <Link to="/" className="auth-pg-footer" style={{ fontSize: 12, letterSpacing: "0.05em" }}>
-              ← Back to home
-            </Link>
-          </div>
+          <Link to="/" className="auth-pg-back">← Back to home</Link>
 
         </div>
       </div>
