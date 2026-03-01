@@ -74,6 +74,13 @@ const styles = `
     font-size: 11px !important;
     letter-spacing: 0.15em !important;
     transition: background 0.2s !important;
+    border: none;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
   }
 
   .nav-cta:hover { background: #9e4828; color: white !important; }
@@ -132,7 +139,7 @@ const styles = `
   }
 `;
 
-export default function Nav() {
+export default function Nav({ onStart }) {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const active = path => pathname === path ? "active" : "";
@@ -145,6 +152,8 @@ export default function Nav() {
     { to: "/contact", label: "Contact" },
   ];
 
+  const handleStart = () => { setOpen(false); onStart?.(); };
+
   return (
     <>
       <style>{styles}</style>
@@ -154,7 +163,7 @@ export default function Nav() {
           <div className="nav-links">
             {links.map(l => <Link key={l.to} to={l.to} className={active(l.to)}>{l.label}</Link>)}
             <Link to="/signin" className={active("/signin")}>Sign In</Link>
-            <Link to="/register" className="nav-cta">Begin Healing</Link>
+            <button className="nav-cta" onClick={handleStart}>Begin Healing</button>
           </div>
           <button className="nav-hamburger" onClick={() => setOpen(!open)} aria-label="Menu">
             <span /><span /><span />
@@ -163,7 +172,7 @@ export default function Nav() {
         <div className={`nav-mobile ${open ? "open" : ""}`}>
           {links.map(l => <Link key={l.to} to={l.to} className={active(l.to)} onClick={() => setOpen(false)}>{l.label}</Link>)}
           <Link to="/signin" onClick={() => setOpen(false)}>Sign In</Link>
-          <Link to="/register" className="nav-cta" onClick={() => setOpen(false)}>Begin Healing</Link>
+          <button className="nav-cta" onClick={handleStart}>Begin Healing</button>
         </div>
       </nav>
     </>

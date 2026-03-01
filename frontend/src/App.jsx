@@ -136,7 +136,7 @@ export default function App() {
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="app-container" style={{ maxWidth: "100vw", overflowX: "hidden", display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Nav />
+      <Nav onStart={() => setShowOnboarding(true)} />
 
       <main style={{ flex: 1 }}>
         <Routes>
