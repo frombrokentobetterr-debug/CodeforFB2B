@@ -20,6 +20,7 @@ import MeetYourPeer from "./pages/MeetYourPeer";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
+import AuthPage from "./pages/AuthPage";
 
 // Modals
 import AuthModal from "./components/AuthModal";
@@ -63,6 +64,8 @@ function JournalRoute({ onStart }) {
 }
 
 export default function App() {
+  const navigate = useNavigate();
+
   const [showAuth, setShowAuth]                     = useState(false);
   const [authMode, setAuthMode]                     = useState("login");
   const [showOnboarding, setShowOnboarding]         = useState(false);
@@ -89,10 +92,12 @@ export default function App() {
     const existing = mockDB.users[userData.email];
     if (existing?.healingData) {
       setHealingData(existing.healingData);
+      navigate("/dashboard");
     } else if (pendingHealingData) {
       mockDB.users[userData.email] = { ...userData, healingData: pendingHealingData };
       setHealingData(pendingHealingData);
       setPendingHealingData(null);
+      navigate("/dashboard");
     } else {
       setShowOnboarding(true);
     }
@@ -105,6 +110,7 @@ export default function App() {
       setShowAuth(false);
       setHealingData(pendingHealingData);
       setPendingHealingData(null);
+      navigate("/dashboard");
     } else {
       mockDB.users[userData.email] = userData;
       setUser(userData);
@@ -118,6 +124,7 @@ export default function App() {
       mockDB.users[user.email] = { ...mockDB.users[user.email], healingData: data };
       setHealingData(data);
       setShowOnboarding(false);
+      navigate("/dashboard");
     } else {
       setPendingHealingData(data);
       setShowOnboarding(false);
@@ -169,9 +176,9 @@ export default function App() {
             />
           } />
 
-          {/* Auth routes — redirect to home (auth is modal-based) */}
-          <Route path="/signin"   element={<Navigate to="/" replace />} />
-          <Route path="/register" element={<Navigate to="/" replace />} />
+          {/* Auth routes */}
+          <Route path="/signin"   element={<AuthPage mode="login"  onLogin={handleLogin} onSignup={handleSignup} mockDB={mockDB} />} />
+          <Route path="/register" element={<AuthPage mode="signup" onLogin={handleLogin} onSignup={handleSignup} mockDB={mockDB} />} />
         </Routes>
       </main>
 
