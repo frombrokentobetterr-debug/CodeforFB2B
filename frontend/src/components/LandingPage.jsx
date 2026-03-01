@@ -15,9 +15,14 @@ export default function LandingPage({ onStart }) {
         alignItems: "center",
         padding: "120px 80px 80px",
         background: "#f4ede3",
-        textAlign: "center",
       }}>
-        <div style={{ width: "100%" }}>
+        <div style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+        }}>
           <div style={{
             fontSize: 11,
             letterSpacing: "0.3em",
