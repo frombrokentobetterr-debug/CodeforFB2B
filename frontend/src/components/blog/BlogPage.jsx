@@ -4,8 +4,7 @@ export default function BlogPage({ onReadArticle }) {
   return (
     <div className="blog-page">
       <div className="blog-header">
-        <div className="section-tag">Healing Journal</div>
-        <h1 className="section-title">The Journey</h1>
+        <h1 className="section-title">The Journal</h1>
       </div>
       <div className="blog-grid">
         {ARTICLES.map(article => (
