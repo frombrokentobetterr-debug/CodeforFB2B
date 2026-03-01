@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 140" width="130" height="140" fill="none">
+  <!-- Arch outer shape -->
+  <path d="M15 130 L15 58 Q15 10 65 10 Q115 10 115 58 L115 130 Z" fill="#c4623a"/>
+  <!-- Inner passage cutout -->
+  <path d="M32 130 L32 62 Q32 28 65 28 Q98 28 98 62 L98 130 Z" fill="#f4ede3"/>
+  <!-- Ground / floor -->
+  <rect x="8" y="128" width="114" height="8" rx="2" fill="#9e4828"/>
+
+  <!-- Walking figure — bigger -->
+  <ellipse cx="65" cy="96" rx="9" ry="9.5" fill="#c4623a"/>
+  <rect x="60" y="105" width="6" height="17" rx="3" fill="#c4623a"/>
+  <rect x="57" y="120" width="5" height="8" rx="2.5" fill="#c4623a" transform="rotate(-10 59 120)"/>
+  <rect x="66" y="120" width="5" height="8" rx="2.5" fill="#c4623a" transform="rotate(10 68 120)"/>
+
+  <!-- Leaf inside arch top-left -->
+  <path d="M50 44 C44 32, 56 24, 62 34 C68 44, 58 54, 50 44 Z" fill="#7a9e87" opacity="0.95"/>
+  <path d="M50 44 C54 36, 60 30, 62 34" stroke="#4d7060" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M50 44 L47 55" stroke="#4d7060" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

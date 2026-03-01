@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { globalCSS } from "./styles/theme";
 
 // Components
-import Nav from "./components/Nav";
+import Nav from "./components/layout/Nav";
+import Footer from "./components/layout/Footer";
 import LandingPage from "./components/LandingPage";
 import Dashboard from "./components/Dashboard";
 import EventsPage from "./components/EventsPage";
@@ -143,6 +144,11 @@ export default function App() {
           onStart={() => setShowOnboarding(true)}
         />
       )}
+
+      <Footer
+        setPage={(p) => { setPage(p); setCurrentArticle(null); }}
+        onStart={() => setShowOnboarding(true)}
+      />
 
       {/* Modals */}
       {showAuth && (

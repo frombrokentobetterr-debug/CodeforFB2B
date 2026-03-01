@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { generateHealingPath } from "../api/healingPath";
+import openDoorIcon from "../assets/icons/open-door.svg";
 
 const QUESTIONS = [
   {
@@ -75,6 +76,7 @@ export default function OnboardingFlow({ onComplete, userName }) {
     return (
       <div className="onboarding-overlay">
         <div className="onboarding-card generating">
+          <img src={openDoorIcon} alt="" style={{ width: 64, height: "auto", marginBottom: 16 }} />
           <div className="spinner" />
           <h2 className="gen-title">Creating your healing path</h2>
           <p className="gen-sub">{genStatus}</p>

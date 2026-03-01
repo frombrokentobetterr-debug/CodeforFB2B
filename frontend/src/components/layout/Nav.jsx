@@ -1,9 +1,11 @@
-import { THEME } from '../styles/theme';
+import { THEME } from '../../styles/theme';
+import openDoorIcon from '../../assets/icons/open-door.svg';
 
 export default function Nav({ user, page, setPage, onLogin, onSignup, onLogout }) {
   return (
     <nav className="nav">
-      <div className="nav-logo" onClick={() => setPage("landing")}>
+      <div className="nav-logo" onClick={() => setPage("landing")} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <img src={openDoorIcon} alt="" style={{ height: 32, width: "auto" }} />
         From <span>Broken</span> to Better
       </div>
       <div className="nav-links">

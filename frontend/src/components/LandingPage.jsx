@@ -2,6 +2,7 @@ import { useState } from "react";
 import { THEME } from "../styles/theme";
 import { FEATURES } from "../data/features";
 import LearnHowModal from "./LearnHowModal";
+import openDoorIcon from "../assets/icons/open-door.svg";
 
 export default function LandingPage({ onStart, onSignin }) {
   const [activeFeature, setActiveFeature] = useState(null);
@@ -14,6 +15,7 @@ export default function LandingPage({ onStart, onSignin }) {
         <div className="hero-blob" style={{ width: 400, height: 400, background: THEME.sageLight, top: "10%", right: "5%" }} />
         <div className="hero-blob" style={{ width: 250, height: 250, background: THEME.dustyRose, bottom: "15%", right: "25%" }} />
         <div className="hero-content">
+          <img src={openDoorIcon} alt="" style={{ width: 72, height: "auto", marginBottom: 24, opacity: 0.92 }} />
           <div className="hero-tag">A safe space to heal & grow</div>
           <h1 className="hero-title">
             Your healing<br />journey starts<br /><em>here.</em>
@@ -42,7 +44,11 @@ export default function LandingPage({ onStart, onSignin }) {
         </div>
       </section>
 
-      <div className="divider" />
+      <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "0 48px" }}>
+        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
+        <img src={openDoorIcon} alt="" style={{ width: 28, height: "auto", opacity: 0.35 }} />
+        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
+      </div>
 
       {/* MISSION */}
       <section className="section" style={{ background: "white" }}>
@@ -74,7 +80,11 @@ export default function LandingPage({ onStart, onSignin }) {
         </div>
       </section>
 
-      <div className="divider" />
+      <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "0 48px" }}>
+        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
+        <img src={openDoorIcon} alt="" style={{ width: 28, height: "auto", opacity: 0.35 }} />
+        <div style={{ flex: 1, height: 1, background: "rgba(124,158,142,0.15)" }} />
+      </div>
 
       {/* HOW IT WORKS */}
       <section className="section">
@@ -111,6 +121,7 @@ export default function LandingPage({ onStart, onSignin }) {
       {/* CTA BANNER */}
       <section style={{ padding: "80px 48px", background: "linear-gradient(135deg, #5A7A6A 0%, #7C9E8E 100%)", textAlign: "center" }}>
         <div style={{ maxWidth: 560, margin: "0 auto" }}>
+          <img src={openDoorIcon} alt="" style={{ width: 64, height: "auto", marginBottom: 28, opacity: 0.85, filter: "brightness(0) invert(1)" }} />
           <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(36px,4vw,52px)", fontWeight: 300, color: "white", marginBottom: 20, lineHeight: 1.2 }}>
             You deserve to feel whole again.
           </h2>

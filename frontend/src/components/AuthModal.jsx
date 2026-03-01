@@ -1,4 +1,5 @@
 import { useState } from "react";
+import openDoorIcon from "../assets/icons/open-door.svg";
 
 // In-memory user store (shared via prop drilling from App)
 export default function AuthModal({ mode, setMode, onLogin, onSignup, onClose, mockDB }) {
@@ -32,6 +33,9 @@ export default function AuthModal({ mode, setMode, onLogin, onSignup, onClose, m
     <div className="auth-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="auth-card">
         <button className="auth-close" onClick={onClose}>×</button>
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <img src={openDoorIcon} alt="" style={{ height: 56, width: "auto" }} />
+        </div>
         <h2 className="auth-title">{mode === "login" ? "Welcome back" : "Begin healing"}</h2>
         <p className="auth-sub">{mode === "login" ? "Sign in to continue your journey." : "Create your free account to get started."}</p>
 
