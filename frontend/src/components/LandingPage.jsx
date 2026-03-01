@@ -13,10 +13,10 @@ export default function LandingPage({ onStart }) {
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
-        padding: "120px 48px 80px",
+        padding: "120px 80px 80px",
         background: "#f4ede3",
       }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", width: "100%" }}>
+        <div style={{ width: "100%" }}>
           <div style={{
             fontSize: 11,
             letterSpacing: "0.3em",
@@ -31,7 +31,7 @@ export default function LandingPage({ onStart }) {
           <h1 style={{
             fontFamily: "'Cormorant Garamond', serif",
             fontSize: "clamp(52px, 7.5vw, 104px)",
-            fontWeight: 300,
+            fontWeight: 400,
             lineHeight: 1.05,
             color: "#2a1e18",
             marginBottom: 36,
@@ -39,7 +39,7 @@ export default function LandingPage({ onStart }) {
           }}>
             Walk your grief.<br />
             Feel whole again.<br />
-            <em style={{ fontStyle: "italic", color: "#c4623a" }}>Rebuild.</em>
+            <em style={{ fontStyle: "italic", color: "#c4623a", fontWeight: 300 }}>Rebuild.</em>
           </h1>
           <p style={{
             fontSize: 18,
@@ -47,7 +47,7 @@ export default function LandingPage({ onStart }) {
             color: "#5a4a3a",
             marginBottom: 52,
             fontWeight: 300,
-            maxWidth: 520,
+            maxWidth: 560,
           }}>
             Broken relationships hurt the same as death. But they cannot be told. This is your place to heal and grieve — out loud, without judgement.
           </p>

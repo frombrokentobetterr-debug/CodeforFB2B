@@ -17,18 +17,19 @@ const styles = `
   }
 
   .nav-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 32px;
-    height: 64px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 20px 48px;
   }
 
   .nav-logo {
+    flex-shrink: 0;
+    margin-right: 40px;
+    position: relative;
+    z-index: 2;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 300;
     color: #2a1e18;
     text-decoration: none;
