@@ -21,6 +21,7 @@ const styles = `
     align-items: center;
     justify-content: space-between;
     padding: 20px 48px;
+    gap: 48px;
   }
 
   .nav-logo {
