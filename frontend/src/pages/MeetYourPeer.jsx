@@ -155,9 +155,10 @@ const styles = `
 `;
 
 const STEPS = [
-  { n: "01", text: "You share your story — how long you were together, how long since the separation." },
-  { n: "02", text: "We read it personally and find someone whose experience mirrors yours." },
-  { n: "03", text: "We introduce you. No pressure. Just a conversation when you're ready." },
+  { n: "01", title: "Tell us what you need", text: "After you share your story, we understand where you are in your grief. Your stage determines who we show you." },
+  { n: "02", title: "Browse matched mentors", text: "You are shown a curated selection of mentors who walked in similar lanes at some point of life. They have gone through separation, divorce, loss of identity, co-parenting, or rebuilding after a relationship. You choose who feels right." },
+  { n: "03", title: "Book a private session", text: "One conversation. No commitment. Book a single session at a time. Sessions happen via secure video, audio, or chat — whatever feels safe for you. It could be anonymous too." },
+  { n: "04", title: "Keep going if it helps", text: "If the first session resonates, book another. Some people need one conversation. Some need ten. There is no prescription — only what works for you and your mentor." },
 ];
 
 export default function MeetYourPeer() {
@@ -180,7 +181,7 @@ export default function MeetYourPeer() {
         <div className="peer-split">
           {/* LEFT — dark walnut */}
           <div className="peer-left">
-            <div className="pl-label">Find Your Peer</div>
+            <div className="pl-label">How It Works</div>
             <h2>Tell us your story.<br />We'll find your person.</h2>
             <p className="pl-sub">There's no right way to say it. Just write what's true.</p>
 
@@ -188,7 +189,10 @@ export default function MeetYourPeer() {
               {STEPS.map(s => (
                 <div className="peer-step" key={s.n}>
                   <span className="ps-num">{s.n}</span>
-                  <span className="ps-text">{s.text}</span>
+                  <span className="ps-text">
+                    <strong style={{ display: "block", color: "#e8d8cc", fontWeight: 400, marginBottom: 4 }}>{s.title}</strong>
+                    {s.text}
+                  </span>
                 </div>
               ))}
             </div>
@@ -255,7 +259,7 @@ export default function MeetYourPeer() {
                 </div>
 
                 <button className="peer-btn" disabled={loading}>
-                  {loading ? "Sending..." : "Find My Peer →"}
+                  {loading ? "Sending..." : "Find My Mentor →"}
                 </button>
               </form>
             )}
