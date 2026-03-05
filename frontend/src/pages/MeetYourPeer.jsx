@@ -224,9 +224,10 @@ export default function MeetYourPeer() {
                     name="story"
                     value={form.story}
                     onChange={onChange}
-                    placeholder="How long were you together? How long since the separation? What is hardest right now?"
+                    placeholder="How long were you together? How long since the separation? What is the hardest thing right now?"
                     required
                   />
+                  <div className="sf-hint">We read every story personally.</div>
                 </div>
 
                 <div className="sf-group">
