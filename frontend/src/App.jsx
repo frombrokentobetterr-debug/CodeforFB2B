@@ -199,6 +199,7 @@ export default function App() {
       {showOnboarding && (
         <OnboardingFlow
           onComplete={handleOnboardingComplete}
+          onCancel={() => setShowOnboarding(false)}
           userName={user?.name}
         />
       )}

@@ -207,7 +207,17 @@ export const globalCSS = `
     background: white; border-radius: 28px; padding: 60px 56px;
     max-width: 600px; width: 100%;
     box-shadow: 0 8px 48px ${THEME.shadow};
+    position: relative;
   }
+  .onboarding-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none; cursor: pointer;
+    color: ${THEME.textLight}; font-size: 16px; line-height: 1;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .onboarding-close:hover { background: rgba(0,0,0,0.06); color: ${THEME.textDark}; }
   .progress-bar { height: 4px; background: ${THEME.sand}; border-radius: 4px; margin-bottom: 48px; }
   .progress-fill { height: 100%; background: ${THEME.sage}; border-radius: 4px; transition: width 0.4s ease; }
   .q-step { font-size: 12px; color: ${THEME.sage}; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }

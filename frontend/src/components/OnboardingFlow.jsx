@@ -30,7 +30,7 @@ const QUESTIONS = [
   },
 ];
 
-export default function OnboardingFlow({ onComplete, userName }) {
+export default function OnboardingFlow({ onComplete, onCancel, userName }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(Array(6).fill(""));
   const [generating, setGenerating] = useState(false);
@@ -88,6 +88,15 @@ export default function OnboardingFlow({ onComplete, userName }) {
   return (
     <div className="onboarding-overlay">
       <div className="onboarding-card">
+        {onCancel && (
+          <button
+            className="onboarding-close"
+            onClick={onCancel}
+            aria-label="Close questionnaire"
+          >
+            ✕
+          </button>
+        )}
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
