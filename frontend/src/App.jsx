@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { globalCSS } from "./styles/theme";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 
 // Layout
@@ -219,6 +220,7 @@ export default function App() {
       )}
 
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 }
