@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { globalCSS } from "./styles/theme";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -138,6 +139,7 @@ export default function App() {
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
+    <HelmetProvider>
     <div className="app-container" style={{ maxWidth: "100vw", overflowX: "hidden", display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Nav onStart={() => setShowOnboarding(true)} />
 
@@ -222,5 +224,6 @@ export default function App() {
       <Analytics />
       <SpeedInsights />
     </div>
+    </HelmetProvider>
   );
 }
