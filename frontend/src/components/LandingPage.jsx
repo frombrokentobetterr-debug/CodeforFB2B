@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { FEATURES } from "../data/features";
 import LearnHowModal from "./LearnHowModal";
 
@@ -8,6 +9,11 @@ export default function LandingPage({ onStart }) {
 
   return (
     <>
+      <Helmet>
+        <title>From Broken To Better — Walk Your Grief. Rebuild.</title>
+        <meta name="description" content="A healing platform for people navigating separation and divorce in India. Find a peer who has walked your path." />
+        <link rel="canonical" href="https://frombrokentobetter.com" />
+      </Helmet>
       {/* HERO */}
       <section style={{
         minHeight: "100vh",
