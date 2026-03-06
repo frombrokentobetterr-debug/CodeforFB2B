@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,500&amp;family=Jost:wght@300;400&amp;display=swap');
+    </style>
+    <!-- Subtle paper texture overlay -->
+    <filter id="paper" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+      <feBlend in="SourceGraphic" in2="grayNoise" mode="multiply" result="blend"/>
+      <feComponentTransfer in="blend">
+        <feFuncA type="linear" slope="1"/>
+      </feComponentTransfer>
+    </filter>
+    <!-- Warm vignette -->
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#f4ede3" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#e8d9c8" stop-opacity="0.4"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Base background -->
+  <rect width="1200" height="630" fill="#f4ede3"/>
+
+  <!-- Subtle warm vignette -->
+  <rect width="1200" height="630" fill="url(#vignette)"/>
+
+  <!-- Very subtle texture lines to suggest paper grain -->
+  <rect width="1200" height="630" fill="none" stroke="#d4c5b0" stroke-width="0.3" opacity="0.15"/>
+
+  <!-- Left accent line — thin terracotta vertical rule -->
+  <line x1="72" y1="120" x2="72" y2="510" stroke="#c4623a" stroke-width="2" opacity="0.6"/>
+
+  <!-- ── LEFT ZONE — Text (60%) ── -->
+
+  <!-- Eyebrow: frombrokentobetter.com -->
+  <text
+    x="96"
+    y="168"
+    font-family="'Jost', 'Helvetica Neue', sans-serif"
+    font-size="18"
+    font-weight="300"
+    fill="#8a7d74"
+    letter-spacing="3"
+  >frombrokentobetter.com</text>
+
+  <!-- Thin divider under eyebrow -->
+  <line x1="96" y1="184" x2="340" y2="184" stroke="#8a7d74" stroke-width="0.8" opacity="0.5"/>
+
+  <!-- Main heading line 1 -->
+  <text
+    x="96"
+    y="268"
+    font-family="'Cormorant Garamond', 'Georgia', serif"
+    font-size="72"
+    font-weight="700"
+    fill="#1c1410"
+    letter-spacing="-1"
+  >From Broken</text>
+
+  <!-- Main heading line 2 -->
+  <text
+    x="96"
+    y="348"
+    font-family="'Cormorant Garamond', 'Georgia', serif"
+    font-size="72"
+    font-weight="700"
+    fill="#1c1410"
+    letter-spacing="-1"
+  >To Better</text>
+
+  <!-- Tagline — terracotta italic -->
+  <text
+    x="98"
+    y="410"
+    font-family="'Cormorant Garamond', 'Georgia', serif"
+    font-size="28"
+    font-style="italic"
+    font-weight="400"
+    fill="#c4623a"
+    letter-spacing="0.5"
+  >Walk your grief. Rebuild.</text>
+
+  <!-- Bottom descriptor -->
+  <text
+    x="98"
+    y="470"
+    font-family="'Jost', 'Helvetica Neue', sans-serif"
+    font-size="16"
+    font-weight="300"
+    fill="#2a1e18"
+    letter-spacing="1.5"
+    opacity="0.75"
+  >A HEALING SPACE FOR SEPARATION &amp; DIVORCE</text>
+
+  <!-- ── RIGHT ZONE — Open Door Icon (40%) ── -->
+  <!-- Centred at x=960, y=315 -->
+
+  <!-- Soft warm circle behind icon for breathing room -->
+  <circle cx="960" cy="315" r="195" fill="#e8d4c0" opacity="0.35"/>
+  <circle cx="960" cy="315" r="160" fill="#dfc9b4" opacity="0.2"/>
+
+  <!-- OPEN DOOR SVG ICON — terracotta arch, walking figure, sage leaf -->
+  <!-- Arch / doorframe -->
+  <path
+    d="M860 480
+       L860 260
+       Q860 195 960 195
+       Q1060 195 1060 260
+       L1060 480
+       Z"
+    fill="none"
+    stroke="#c4623a"
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Door panel (open, swung inward — left edge) -->
+  <path
+    d="M870 478
+       L870 268
+       Q870 210 960 210
+       Q980 210 995 218
+       L995 478
+       Z"
+    fill="#c4623a"
+    opacity="0.12"
+  />
+
+  <!-- Door open edge line -->
+  <line x1="870" y1="478" x2="870" y2="268" stroke="#c4623a" stroke-width="3" opacity="0.5"/>
+
+  <!-- Door threshold / floor line -->
+  <line x1="845" y1="480" x2="1075" y2="480" stroke="#c4623a" stroke-width="3" opacity="0.6"/>
+
+  <!-- Light spill from open door — warm glow -->
+  <path
+    d="M870 478 L870 268 Q870 210 960 210 Q1055 210 1055 268 L1055 478 Z"
+    fill="#f9e8d0"
+    opacity="0.25"
+  />
+
+  <!-- Walking figure — simple, dignified silhouette -->
+  <!-- Head -->
+  <circle cx="1000" cy="330" r="18" fill="#c4623a" opacity="0.85"/>
+
+  <!-- Body -->
+  <line x1="1000" y1="348" x2="1000" y2="420" stroke="#c4623a" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+
+  <!-- Arms — slightly raised, walking forward -->
+  <path d="M1000 368 Q980 355 972 345" stroke="#c4623a" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.85"/>
+  <path d="M1000 368 Q1018 358 1024 350" stroke="#c4623a" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.85"/>
+
+  <!-- Legs — mid stride -->
+  <path d="M1000 420 Q988 448 982 470" stroke="#c4623a" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.85"/>
+  <path d="M1000 420 Q1012 448 1018 470" stroke="#c4623a" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.85"/>
+
+  <!-- Sage leaf — bottom right of icon, subtle -->
+  <!-- Stem -->
+  <path
+    d="M1038 455 Q1044 435 1052 418"
+    stroke="#7a9e7e"
+    stroke-width="2"
+    fill="none"
+    stroke-linecap="round"
+    opacity="0.8"
+  />
+  <!-- Leaf 1 -->
+  <path
+    d="M1044 442 Q1056 436 1055 424 Q1045 430 1044 442 Z"
+    fill="#7a9e7e"
+    opacity="0.75"
+  />
+  <!-- Leaf 2 -->
+  <path
+    d="M1040 432 Q1028 424 1030 412 Q1040 418 1040 432 Z"
+    fill="#7a9e7e"
+    opacity="0.6"
+  />
+  <!-- Leaf 3 small -->
+  <path
+    d="M1048 422 Q1058 416 1056 406 Q1047 412 1048 422 Z"
+    fill="#7a9e7e"
+    opacity="0.55"
+  />
+
+  <!-- ── Bottom strip — very subtle warm divider ── -->
+  <line x1="72" y1="555" x2="1128" y2="555" stroke="#c4623a" stroke-width="1" opacity="0.2"/>
+
+  <!-- Bottom tagline strip -->
+  <text
+    x="96"
+    y="585"
+    font-family="'Jost', 'Helvetica Neue', sans-serif"
+    font-size="13"
+    font-weight="300"
+    fill="#8a7d74"
+    letter-spacing="2"
+    opacity="0.8"
+  >NOT A DATING APP. THIS IS WHAT COMES AFTER.</text>
+
+</svg>
