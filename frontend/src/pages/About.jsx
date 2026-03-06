@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet-async";
+
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
 
@@ -60,6 +62,11 @@ const styles = `
 export default function About() {
   return (
     <>
+      <Helmet>
+        <title>Our Story | From Broken To Better</title>
+        <meta name="description" content="From elders arranging marriages to algorithms deciding love — separation in India is now an epidemic no app addresses. This is what comes after." />
+        <link rel="canonical" href="https://frombrokentobetter.com/about" />
+      </Helmet>
       <style>{styles}</style>
       <div className="about">
 
