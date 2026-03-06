@@ -180,6 +180,20 @@ export default function MeetYourPeer() {
         <title>Find a Peer Guide | From Broken To Better</title>
         <meta name="description" content="Share your story and get matched with someone who has been through separation just like you. Peer support, not therapy." />
         <link rel="canonical" href="https://frombrokentobetter.com/meet-your-peer" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://frombrokentobetter.com/meet-your-peer" />
+        <meta property="og:title" content="Find a Peer Guide | From Broken To Better" />
+        <meta property="og:description" content="Share your story and get matched with someone who has been through separation just like you. Peer support, not therapy." />
+        <meta property="og:image" content="https://frombrokentobetter.com/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="From Broken To Better" />
+        <meta property="og:locale" content="en_IN" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://frombrokentobetter.com/meet-your-peer" />
+        <meta name="twitter:title" content="Find a Peer Guide | From Broken To Better" />
+        <meta name="twitter:description" content="Share your story and get matched with someone who has been through separation just like you. Peer support, not therapy." />
+        <meta name="twitter:image" content="https://frombrokentobetter.com/og-image.jpg" />
       </Helmet>
       <style>{styles}</style>
       <div className="peer">

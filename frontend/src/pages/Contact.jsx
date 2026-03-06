@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
@@ -52,6 +53,25 @@ export default function Contact() {
 
   return (
     <>
+      <Helmet>
+        <title>Contact Us | From Broken To Better</title>
+        <meta name="description" content="Reach out to From Broken To Better. We are here for anyone navigating separation or divorce in India. Your story stays private, always." />
+        <link rel="canonical" href="https://frombrokentobetter.com/contact" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://frombrokentobetter.com/contact" />
+        <meta property="og:title" content="Contact Us | From Broken To Better" />
+        <meta property="og:description" content="Reach out to From Broken To Better. We are here for anyone navigating separation or divorce in India. Your story stays private, always." />
+        <meta property="og:image" content="https://frombrokentobetter.com/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="From Broken To Better" />
+        <meta property="og:locale" content="en_IN" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://frombrokentobetter.com/contact" />
+        <meta name="twitter:title" content="Contact Us | From Broken To Better" />
+        <meta name="twitter:description" content="Reach out to From Broken To Better. We are here for anyone navigating separation or divorce in India. Your story stays private, always." />
+        <meta name="twitter:image" content="https://frombrokentobetter.com/og-image.jpg" />
+      </Helmet>
       <style>{styles}</style>
       <div className="contact">
         <section className="contact-hero">

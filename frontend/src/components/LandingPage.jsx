@@ -12,7 +12,21 @@ export default function LandingPage({ onStart }) {
       <Helmet>
         <title>From Broken To Better — Walk Your Grief. Rebuild.</title>
         <meta name="description" content="A healing platform for people navigating separation and divorce in India. Find a peer who has walked your path." />
-        <link rel="canonical" href="https://frombrokentobetter.com" />
+        <link rel="canonical" href="https://frombrokentobetter.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://frombrokentobetter.com/" />
+        <meta property="og:title" content="From Broken To Better — Walk Your Grief. Rebuild." />
+        <meta property="og:description" content="A healing platform for people navigating separation and divorce in India. Find a peer who has walked your path." />
+        <meta property="og:image" content="https://frombrokentobetter.com/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="From Broken To Better" />
+        <meta property="og:locale" content="en_IN" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://frombrokentobetter.com/" />
+        <meta name="twitter:title" content="From Broken To Better — Walk Your Grief. Rebuild." />
+        <meta name="twitter:description" content="A healing platform for people navigating separation and divorce in India. Find a peer who has walked your path." />
+        <meta name="twitter:image" content="https://frombrokentobetter.com/og-image.jpg" />
       </Helmet>
       {/* HERO */}
       <section style={{

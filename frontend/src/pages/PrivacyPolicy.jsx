@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet-async";
+
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
 
@@ -40,6 +42,25 @@ const styles = `
 export default function PrivacyPolicy() {
   return (
     <>
+      <Helmet>
+        <title>Privacy Policy | From Broken To Better</title>
+        <meta name="description" content="How From Broken To Better collects, uses, and protects your personal data. Governed by Indian IT Act and DPDP Act 2023." />
+        <link rel="canonical" href="https://frombrokentobetter.com/privacy-policy" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://frombrokentobetter.com/privacy-policy" />
+        <meta property="og:title" content="Privacy Policy | From Broken To Better" />
+        <meta property="og:description" content="How From Broken To Better collects, uses, and protects your personal data. Governed by Indian IT Act and DPDP Act 2023." />
+        <meta property="og:image" content="https://frombrokentobetter.com/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="From Broken To Better" />
+        <meta property="og:locale" content="en_IN" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://frombrokentobetter.com/privacy-policy" />
+        <meta name="twitter:title" content="Privacy Policy | From Broken To Better" />
+        <meta name="twitter:description" content="How From Broken To Better collects, uses, and protects your personal data. Governed by Indian IT Act and DPDP Act 2023." />
+        <meta name="twitter:image" content="https://frombrokentobetter.com/og-image.jpg" />
+      </Helmet>
       <style>{styles}</style>
       <div className="pp">
 

@@ -66,6 +66,20 @@ export default function About() {
         <title>Our Story | From Broken To Better</title>
         <meta name="description" content="From elders arranging marriages to algorithms deciding love — separation in India is now an epidemic no app addresses. This is what comes after." />
         <link rel="canonical" href="https://frombrokentobetter.com/about" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://frombrokentobetter.com/about" />
+        <meta property="og:title" content="Our Story | From Broken To Better" />
+        <meta property="og:description" content="From elders arranging marriages to algorithms deciding love — separation in India is now an epidemic no app addresses. This is what comes after." />
+        <meta property="og:image" content="https://frombrokentobetter.com/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="From Broken To Better" />
+        <meta property="og:locale" content="en_IN" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://frombrokentobetter.com/about" />
+        <meta name="twitter:title" content="Our Story | From Broken To Better" />
+        <meta name="twitter:description" content="From elders arranging marriages to algorithms deciding love — separation in India is now an epidemic no app addresses. This is what comes after." />
+        <meta name="twitter:image" content="https://frombrokentobetter.com/og-image.jpg" />
       </Helmet>
       <style>{styles}</style>
       <div className="about">
