@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx vite build)",
-      "Bash(npm install react-helmet-async)"
+      "Bash(npm install react-helmet-async)",
+      "Bash(npm install @supabase/supabase-js)"
     ]
   }
 }
