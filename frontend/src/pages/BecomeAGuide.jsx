@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "../lib/supabase";
 
@@ -219,6 +220,7 @@ const styles = `
   .guide-success { text-align: center; padding: 48px 0; }
   .guide-success h3 { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; color: #2a2420; margin: 14px 0 10px; }
   .guide-success p { font-size: 13px; color: #8a7d74; line-height: 1.8; }
+  .guide-success .guide-btn { max-width: 280px; margin: 28px auto 0; display: block; }
 
   @media (max-width: 768px) {
     .guide-split { flex-direction: column; }
@@ -241,9 +243,14 @@ const SEPARATION_TYPES = [
   { value: "situationship", label: "Situationship / Unclear" },
 ];
 
-const LANGUAGES = ["Hindi", "English", "Other"];
+const LANGUAGES = [
+  "Hindi", "English", "Tamil",
+  "Bengali", "Marathi", "Punjabi", "Telugu", "Other"
+];
 
 export default function BecomeAGuide() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     bio: "",
     separation_type: "",
@@ -271,13 +278,33 @@ export default function BecomeAGuide() {
     setError("");
     setLoading(true);
 
+    // 1. Auth check
     const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setError("Please sign in first to apply as a guide.");
+      setLoading(false);
+      return;
+    }
 
-    // Upload photo if provided
+    // 2. Validate bio length
+    if (form.bio.trim().length < 100) {
+      setError("Please tell us a little more — your story helps seekers trust you.");
+      setLoading(false);
+      return;
+    }
+
+    // 3. Validate languages
+    if (form.languages_spoken.length === 0) {
+      setError("Please select at least one language you can support people in.");
+      setLoading(false);
+      return;
+    }
+
+    // 4. Upload photo if provided
     let photo_url = null;
     if (form.photo) {
       const ext      = form.photo.name.split(".").pop();
-      const fileName = `${Date.now()}.${ext}`;
+      const fileName = `${session.user.id}-${Date.now()}.${ext}`;
       const { error: uploadErr } = await supabase.storage
         .from("guide-photos")
         .upload(fileName, form.photo, { upsert: false });
@@ -294,21 +321,30 @@ export default function BecomeAGuide() {
       photo_url = urlData.publicUrl;
     }
 
-    const { error: err } = await supabase.from("peer_guide_profiles").insert({
-      user_id:             session?.user?.id ?? null,
-      bio:                 form.bio,
-      separation_type:     form.separation_type   || null,
-      languages_spoken:    form.languages_spoken.length ? form.languages_spoken : null,
-      is_available:        form.is_available,
-      session_rate_inr:    form.session_rate_inr  ? parseInt(form.session_rate_inr, 10) : null,
-      photo_url,
-      is_approved_by_admin: false,
-      created_at:          new Date().toISOString(),
-    });
+    // 5. Insert into Supabase
+    const { error: err } = await supabase
+      .from("peer_guide_profiles")
+      .insert({
+        user_id:                     session.user.id,
+        bio:                         form.bio.trim(),
+        separation_type_experienced: form.separation_type || null,
+        languages_spoken:            form.languages_spoken.length
+                                       ? form.languages_spoken
+                                       : null,
+        is_available:                form.is_available,
+        session_rate_inr:            form.session_rate_inr
+                                       ? parseInt(form.session_rate_inr, 10)
+                                       : null,
+        photo_url,
+        is_approved_by_admin:        true,
+      });
 
     setLoading(false);
+
     if (err) {
-      setError("Something went wrong. Please try again or email us at hello@frombrokentobetter.com");
+      setError(
+        "Something went wrong. Please try again or email us at admin@frombrokentobetter.com"
+      );
     } else {
       setSent(true);
     }
@@ -320,22 +356,24 @@ export default function BecomeAGuide() {
         <title>Become a Peer Guide | From Broken To Better</title>
         <meta name="description" content="Share your story of surviving separation and help others do the same. Apply to become a peer guide at From Broken To Better." />
         <link rel="canonical" href="https://frombrokentobetter.com/become-a-guide" />
-        <meta property="og:type"        content="website" />
-        <meta property="og:url"         content="https://frombrokentobetter.com/become-a-guide" />
-        <meta property="og:title"       content="Become a Peer Guide | From Broken To Better" />
-        <meta property="og:description" content="Share your story of surviving separation and help others do the same. Apply to become a peer guide." />
-        <meta property="og:image"       content="https://frombrokentobetter.com/og-image.jpg" />
+        <meta property="og:type"         content="website" />
+        <meta property="og:url"          content="https://frombrokentobetter.com/become-a-guide" />
+        <meta property="og:title"        content="Become a Peer Guide | From Broken To Better" />
+        <meta property="og:description"  content="Share your story of surviving separation and help others do the same. Apply to become a peer guide." />
+        <meta property="og:image"        content="https://frombrokentobetter.com/og-image.jpg" />
         <meta property="og:image:width"  content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:site_name"   content="From Broken To Better" />
-        <meta property="og:locale"      content="en_IN" />
+        <meta property="og:site_name"    content="From Broken To Better" />
+        <meta property="og:locale"       content="en_IN" />
         <meta name="twitter:card"        content="summary_large_image" />
         <meta name="twitter:url"         content="https://frombrokentobetter.com/become-a-guide" />
         <meta name="twitter:title"       content="Become a Peer Guide | From Broken To Better" />
         <meta name="twitter:description" content="Share your story of surviving separation and help others do the same." />
         <meta name="twitter:image"       content="https://frombrokentobetter.com/og-image.jpg" />
       </Helmet>
+
       <style>{styles}</style>
+
       <div className="guide">
         <div className="guide-split">
 
@@ -350,14 +388,18 @@ export default function BecomeAGuide() {
                 <div className="guide-trait" key={t.n}>
                   <span className="gt-num">{t.n}</span>
                   <span className="gt-text">
-                    <strong style={{ display: "block", color: "#e8d8cc", fontWeight: 400, marginBottom: 4 }}>{t.title}</strong>
+                    <strong style={{ display: "block", color: "#e8d8cc", fontWeight: 400, marginBottom: 4 }}>
+                      {t.title}
+                    </strong>
                     {t.text}
                   </span>
                 </div>
               ))}
             </div>
 
-            <p className="gl-footer">Every application is reviewed by our team. We'll be in touch within 72 hours.</p>
+            <p className="gl-footer">
+              Every application is reviewed by our team. We'll be in touch within 72 hours.
+            </p>
           </div>
 
           {/* RIGHT */}
@@ -366,7 +408,16 @@ export default function BecomeAGuide() {
               <div className="guide-success">
                 <div style={{ fontSize: 40 }}>🌿</div>
                 <h3>Application received.</h3>
-                <p>Thank you for wanting to help.<br />Our team will review your application and reach out within 72 hours.</p>
+                <p>
+                  Thank you for wanting to help.<br />
+                  Our team will review your application and reach out within 72 hours.
+                </p>
+                <button
+                  className="guide-btn"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Go to your Dashboard →
+                </button>
               </div>
             ) : (
               <form onSubmit={onSubmit}>
@@ -413,13 +464,17 @@ export default function BecomeAGuide() {
                   <label>Availability</label>
                   <div className="gf-toggle-row">
                     <span className="gf-toggle-label">
-                      {form.is_available ? "Available to take sessions" : "Not available right now"}
+                      {form.is_available
+                        ? "Available to take sessions"
+                        : "Not available right now"}
                     </span>
                     <label className="gf-toggle">
                       <input
                         type="checkbox"
                         checked={form.is_available}
-                        onChange={e => setForm(prev => ({ ...prev, is_available: e.target.checked }))}
+                        onChange={e =>
+                          setForm(prev => ({ ...prev, is_available: e.target.checked }))
+                        }
                       />
                       <span className="gf-toggle-slider" />
                     </label>
@@ -456,7 +511,9 @@ export default function BecomeAGuide() {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={e => setForm(prev => ({ ...prev, photo: e.target.files[0] ?? null }))}
+                      onChange={e =>
+                        setForm(prev => ({ ...prev, photo: e.target.files[0] ?? null }))
+                      }
                     />
                     <span style={{ fontSize: 20, color: "#c4a898", lineHeight: 1 }}>↑</span>
                     <span className="gf-file-text">
