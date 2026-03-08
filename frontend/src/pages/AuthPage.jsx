@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import openDoorIcon from "../assets/icons/open-door.svg";
+import { supabase } from "../lib/supabase";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
@@ -160,14 +161,15 @@ const styles = `
   }
 `;
 
-export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB }) {
+export default function AuthPage({ mode: initialMode, onLogin, onSignup }) {
   const [mode, setMode] = useState(initialMode);
 
   // Signup fields
-  const [fullName, setFullName]   = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [phone, setPhone]         = useState("");
-  const [story, setStory]         = useState("");
+  const [fullName, setFullName]         = useState("");
+  const [signupEmail, setSignupEmail]   = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [phone, setPhone]               = useState("");
+  const [story, setStory]               = useState("");
 
   // Login fields
   const [loginEmail, setLoginEmail]       = useState("");
@@ -179,7 +181,7 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB 
   const switchMode = (next) => {
     setMode(next);
     setError("");
-    setFullName(""); setSignupEmail(""); setPhone(""); setStory("");
+    setFullName(""); setSignupEmail(""); setSignupPassword(""); setPhone(""); setStory("");
     setLoginEmail(""); setLoginPassword("");
   };
 
@@ -189,20 +191,22 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB 
     if (mode === "login") {
       if (!loginEmail || !loginPassword) { setError("Please fill in all fields."); return; }
       setLoading(true);
-      await new Promise(r => setTimeout(r, 700));
-      const existing = mockDB.users[loginEmail];
-      if (!existing || (existing.password && existing.password !== loginPassword)) {
-        setError("Invalid email or password."); setLoading(false); return;
-      }
-      onLogin(existing);
+      const { error: err } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword });
+      if (err) { setError(err.message); setLoading(false); return; }
+      onLogin();
     } else {
       if (!fullName.trim()) { setError("Please enter your full name."); return; }
       if (!signupEmail.trim()) { setError("Please enter your email address."); return; }
       if (!/\S+@\S+\.\S+/.test(signupEmail)) { setError("Please enter a valid email address."); return; }
-      if (mockDB.users[signupEmail]) { setError("An account with this email already exists."); return; }
+      if (!signupPassword || signupPassword.length < 6) { setError("Password must be at least 6 characters."); return; }
       setLoading(true);
-      await new Promise(r => setTimeout(r, 700));
-      onSignup({ name: fullName, email: signupEmail, phone, story, createdAt: new Date().toISOString() });
+      const { error: err } = await supabase.auth.signUp({
+        email: signupEmail,
+        password: signupPassword,
+        options: { data: { full_name: fullName, phone } },
+      });
+      if (err) { setError(err.message); setLoading(false); return; }
+      onSignup();
     }
 
     setLoading(false);
@@ -263,6 +267,19 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup, mockDB 
                     placeholder="you@example.com"
                     value={signupEmail}
                     onChange={e => setSignupEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Password <span style={{ color: "#c4623a" }}>*</span>
+                  </label>
+                  <input
+                    className="form-input"
+                    type="password"
+                    placeholder="At least 6 characters"
+                    value={signupPassword}
+                    onChange={e => setSignupPassword(e.target.value)}
                   />
                 </div>
 

@@ -87,6 +87,29 @@ const styles = `
   .nav-cta:hover { background: #9e4828; color: white !important; }
   .nav-cta::after { display: none !important; }
 
+  .nav-user {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #2a1e18;
+    font-weight: 300;
+  }
+
+  .nav-logout {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6a5a50;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  .nav-logout:hover { color: #c4623a; }
+
   /* MOBILE */
   .nav-hamburger {
     display: none;
@@ -140,10 +163,11 @@ const styles = `
   }
 `;
 
-export default function Nav({ onStart }) {
+export default function Nav({ onStart, user, onLogout }) {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const active = path => pathname === path ? "active" : "";
+  const firstName = user?.user_metadata?.full_name?.split(" ")[0];
 
   const links = [
     { to: "/about", label: "About" },
@@ -163,7 +187,14 @@ export default function Nav({ onStart }) {
           <Link to="/" className="nav-logo">From <span>Broken</span> to Better</Link>
           <div className="nav-links">
             {links.map(l => <Link key={l.to} to={l.to} className={active(l.to)}>{l.label}</Link>)}
-            <Link to="/signin" className={active("/signin")}>Sign In</Link>
+            {user ? (
+              <>
+                <span className="nav-user">Hi, {firstName}</span>
+                <button className="nav-logout" onClick={onLogout}>Sign Out</button>
+              </>
+            ) : (
+              <Link to="/signin" className={active("/signin")}>Sign In</Link>
+            )}
             <button className="nav-cta" onClick={handleStart}>Begin Healing</button>
           </div>
           <button className="nav-hamburger" onClick={() => setOpen(!open)} aria-label="Menu">
@@ -172,7 +203,11 @@ export default function Nav({ onStart }) {
         </div>
         <div className={`nav-mobile ${open ? "open" : ""}`}>
           {links.map(l => <Link key={l.to} to={l.to} className={active(l.to)} onClick={() => setOpen(false)}>{l.label}</Link>)}
-          <Link to="/signin" onClick={() => setOpen(false)}>Sign In</Link>
+          {user ? (
+            <button className="nav-logout" onClick={() => { setOpen(false); onLogout(); }}>Sign Out</button>
+          ) : (
+            <Link to="/signin" onClick={() => setOpen(false)}>Sign In</Link>
+          )}
           <button className="nav-cta" onClick={handleStart}>Begin Healing</button>
         </div>
       </nav>

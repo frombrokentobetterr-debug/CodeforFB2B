@@ -1,8 +1,8 @@
 import { useState } from "react";
 import openDoorIcon from "../assets/icons/open-door.svg";
+import { supabase } from "../lib/supabase";
 
-// In-memory user store (shared via prop drilling from App)
-export default function AuthModal({ mode, setMode, onLogin, onSignup, onClose, mockDB }) {
+export default function AuthModal({ mode, setMode, onLogin, onSignup, onClose }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,18 +13,19 @@ export default function AuthModal({ mode, setMode, onLogin, onSignup, onClose, m
     if (!email || !password) { setError("Please fill in all fields."); return; }
     if (mode === "signup" && !name) { setError("Please enter your name."); return; }
     setLoading(true); setError("");
-    await new Promise(r => setTimeout(r, 800));
 
     if (mode === "login") {
-      const existing = mockDB.users[email];
-      if (!existing || existing.password !== password) {
-        setError("Invalid email or password."); setLoading(false); return;
-      }
-      onLogin(existing);
+      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+      if (err) { setError(err.message); setLoading(false); return; }
+      onLogin();
     } else {
-      if (mockDB.users[email]) { setError("An account with this email already exists."); setLoading(false); return; }
-      const userData = { name, email, password, createdAt: new Date().toISOString() };
-      onSignup(userData);
+      const { error: err } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } },
+      });
+      if (err) { setError(err.message); setLoading(false); return; }
+      onSignup();
     }
     setLoading(false);
   };

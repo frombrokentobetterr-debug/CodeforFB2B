@@ -4,6 +4,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { globalCSS } from "./styles/theme";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { supabase } from "./lib/supabase";
 
 
 // Layout
@@ -30,9 +31,6 @@ import AuthPage from "./pages/AuthPage";
 import AuthModal from "./components/AuthModal";
 import OnboardingFlow from "./components/OnboardingFlow";
 import BookingModal from "./components/BookingModal";
-
-// In-memory database (replace with real DB later)
-const mockDB = { users: {}, sessions: {} };
 
 // Maps old page-name strings (used by Dashboard) to router paths
 const PAGE_TO_PATH = {
@@ -87,45 +85,42 @@ export default function App() {
     return () => document.head.removeChild(style);
   }, []);
 
+  // Supabase session persistence
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
   // ─── Auth Handlers ────────────────────────────────────────────────────────
   const openAuth = (mode = "login") => { setAuthMode(mode); setShowAuth(true); };
 
-  const handleLogin = (userData) => {
-    setUser(userData);
+  const handleLogin = () => {
     setShowAuth(false);
-    const existing = mockDB.users[userData.email];
-    if (existing?.healingData) {
-      setHealingData(existing.healingData);
-      navigate("/dashboard");
-    } else if (pendingHealingData) {
-      mockDB.users[userData.email] = { ...userData, healingData: pendingHealingData };
+    if (pendingHealingData) {
       setHealingData(pendingHealingData);
       setPendingHealingData(null);
-      navigate("/dashboard");
-    } else {
-      setShowOnboarding(true);
     }
+    navigate("/dashboard");
   };
 
-  const handleSignup = (userData) => {
+  const handleSignup = () => {
+    setShowAuth(false);
     if (pendingHealingData) {
-      mockDB.users[userData.email] = { ...userData, healingData: pendingHealingData };
-      setUser(userData);
-      setShowAuth(false);
       setHealingData(pendingHealingData);
       setPendingHealingData(null);
       navigate("/dashboard");
     } else {
-      mockDB.users[userData.email] = userData;
-      setUser(userData);
-      setShowAuth(false);
       setShowOnboarding(true);
     }
   };
 
   const handleOnboardingComplete = (data) => {
     if (user) {
-      mockDB.users[user.email] = { ...mockDB.users[user.email], healingData: data };
       setHealingData(data);
       setShowOnboarding(false);
       navigate("/dashboard");
@@ -137,11 +132,17 @@ export default function App() {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setHealingData(null);
+    navigate("/");
+  };
+
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <HelmetProvider>
     <div className="app-container" style={{ maxWidth: "100vw", overflowX: "hidden", display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Nav onStart={() => setShowOnboarding(true)} />
+      <Nav onStart={() => setShowOnboarding(true)} user={user} onLogout={handleLogout} />
 
       <main style={{ flex: 1 }}>
         <Routes>
@@ -182,8 +183,8 @@ export default function App() {
           } />
 
           {/* Auth routes */}
-          <Route path="/signin"   element={<AuthPage mode="login"  onLogin={handleLogin} onSignup={handleSignup} mockDB={mockDB} />} />
-          <Route path="/register" element={<AuthPage mode="signup" onLogin={handleLogin} onSignup={handleSignup} mockDB={mockDB} />} />
+          <Route path="/signin"   element={<AuthPage mode="login"  onLogin={handleLogin} onSignup={handleSignup} />} />
+          <Route path="/register" element={<AuthPage mode="signup" onLogin={handleLogin} onSignup={handleSignup} />} />
         </Routes>
       </main>
 
@@ -197,7 +198,6 @@ export default function App() {
           onLogin={handleLogin}
           onSignup={handleSignup}
           onClose={() => setShowAuth(false)}
-          mockDB={mockDB}
         />
       )}
 
@@ -205,7 +205,7 @@ export default function App() {
         <OnboardingFlow
           onComplete={handleOnboardingComplete}
           onCancel={() => setShowOnboarding(false)}
-          userName={user?.name}
+          userName={user?.user_metadata?.full_name}
         />
       )}
 
@@ -217,7 +217,6 @@ export default function App() {
         <BookingModal
           event={bookingEvent}
           onClose={() => setBookingEvent(null)}
-          mockDB={mockDB}
         />
       )}
 
