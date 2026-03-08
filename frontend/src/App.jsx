@@ -27,6 +27,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import AuthPage from "./pages/AuthPage";
 import AdminPage from "./pages/AdminPage";
+import BecomeAGuide from "./pages/BecomeAGuide";
 
 // Modals
 import AuthModal from "./components/AuthModal";
@@ -161,6 +162,7 @@ export default function App() {
           <Route path="/contact"        element={<Contact />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms"          element={<Terms />} />
+          <Route path="/become-a-guide" element={<BecomeAGuide />} />
 
           {/* Existing pages */}
           <Route path="/events" element={
