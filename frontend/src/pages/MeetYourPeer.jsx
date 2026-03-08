@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { supabase } from "../lib/supabase";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
@@ -116,7 +117,26 @@ const styles = `
   .sf-group input:focus,
   .sf-group textarea:focus { border-color: #c4623a; }
   .sf-group textarea { resize: vertical; min-height: 140px; line-height: 1.7; }
+  .sf-group select {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e0d4c4;
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: #2a2420;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    appearance: none;
+    cursor: pointer;
+  }
+  .sf-group select:focus { border-color: #c4623a; }
+  .sf-group select option[value=""] { color: #b8a898; }
   .sf-hint { font-size: 10px; color: #a09488; margin-top: 5px; }
+  .peer-error { font-size: 12px; color: #c0392b; margin-top: 12px; line-height: 1.6; }
 
   .peer-btn {
     width: 100%;
@@ -163,15 +183,41 @@ const STEPS = [
 ];
 
 export default function MeetYourPeer() {
-  const [form, setForm] = useState({ name: "", story: "", email: "", phone: "" });
+  const [form, setForm] = useState({
+    name: "", story: "", email: "", phone: "",
+    separation_type: "", separation_timeline: "",
+    children_involved: "", religion: "",
+  });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const onChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-  const onSubmit = e => {
+
+  const onSubmit = async e => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSent(true); }, 1000);
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const { error: err } = await supabase.from("seeker_profiles").insert({
+      user_id: session?.user?.id ?? null,
+      what_hurts: form.story,
+      separation_type: form.separation_type || null,
+      religion: form.religion || null,
+      children_involved: form.children_involved === "yes" ? true : form.children_involved === "no" ? false : null,
+      separation_timeline: form.separation_timeline || null,
+      matching_status: "pending",
+      created_at: new Date().toISOString(),
+    });
+
+    setLoading(false);
+    if (err) {
+      setError("Something went wrong. Please try again or email us directly at hello@frombrokentobetter.com");
+    } else {
+      setSent(true);
+    }
   };
 
   return (
@@ -225,8 +271,8 @@ export default function MeetYourPeer() {
             {sent ? (
               <div className="peer-success">
                 <div style={{ fontSize: 40 }}>🌿</div>
-                <h3>We've heard you.</h3>
-                <p>We'll review your story and reach back<br />within 48 hours with your peer match.</p>
+                <h3>Your story has been received.</h3>
+                <p>We will be in touch within 48 hours.</p>
               </div>
             ) : (
               <form onSubmit={onSubmit}>
@@ -255,6 +301,52 @@ export default function MeetYourPeer() {
                 </div>
 
                 <div className="sf-group">
+                  <label>Type of Separation</label>
+                  <select name="separation_type" value={form.separation_type} onChange={onChange}>
+                    <option value="">Select one</option>
+                    <option value="married">Married</option>
+                    <option value="live_in">Live-in relationship</option>
+                    <option value="long_term">Long-term partner</option>
+                    <option value="situationship">Situationship / Unclear</option>
+                  </select>
+                </div>
+
+                <div className="sf-group">
+                  <label>How Long Ago</label>
+                  <select name="separation_timeline" value={form.separation_timeline} onChange={onChange}>
+                    <option value="">Select one</option>
+                    <option value="under_3m">Less than 3 months</option>
+                    <option value="3_6m">3–6 months</option>
+                    <option value="6_12m">6–12 months</option>
+                    <option value="1_2y">1–2 years</option>
+                    <option value="over_2y">Over 2 years</option>
+                  </select>
+                </div>
+
+                <div className="sf-group">
+                  <label>Children Involved</label>
+                  <select name="children_involved" value={form.children_involved} onChange={onChange}>
+                    <option value="">Select one</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+
+                <div className="sf-group">
+                  <label>Religion / Background <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>(optional)</span></label>
+                  <select name="religion" value={form.religion} onChange={onChange}>
+                    <option value="">Prefer not to say</option>
+                    <option value="hindu">Hindu</option>
+                    <option value="muslim">Muslim</option>
+                    <option value="christian">Christian</option>
+                    <option value="sikh">Sikh</option>
+                    <option value="jain">Jain</option>
+                    <option value="buddhist">Buddhist</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div className="sf-group">
                   <label>Email Address</label>
                   <input
                     name="email"
@@ -278,8 +370,10 @@ export default function MeetYourPeer() {
                   <div className="sf-hint">Optional — we'll call you if you'd prefer to talk</div>
                 </div>
 
+                {error && <p className="peer-error">{error}</p>}
+
                 <button className="peer-btn" disabled={loading}>
-                  {loading ? "Sending..." : "Find My Mentor →"}
+                  {loading ? "Sending…" : "Find My Mentor →"}
                 </button>
               </form>
             )}

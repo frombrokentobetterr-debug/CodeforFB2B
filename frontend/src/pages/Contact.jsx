@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { supabase } from "../lib/supabase";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap');
@@ -34,6 +35,8 @@ const styles = `
   .success h3 { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; margin: 12px 0 8px; }
   .success p { font-size: 13px; color: #8a7d74; line-height: 1.8; }
 
+  .contact-error { font-size: 12px; color: #c0392b; margin-top: 12px; line-height: 1.6; }
+
   .crisis { margin-top: 28px; padding: 16px 20px; background: #fff; border-left: 3px solid #7a9e87; font-size: 12px; line-height: 1.8; color: #8a7d74; }
   .crisis strong { color: #4d7060; font-weight: 500; }
 
@@ -44,11 +47,32 @@ export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const onChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-  const onSubmit = e => {
+
+  const onSubmit = async e => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSent(true); }, 1000);
+
+    // Primary: save to Supabase
+    const { error: dbErr } = await supabase.from("contact_messages").insert({
+      name:    form.name,
+      email:   form.email   || null,
+      phone:   form.phone   || null,
+      subject: form.subject,
+      message: form.message,
+    });
+
+    if (dbErr) {
+      setError("Something didn't go through. Please try again or write to us directly at admin@frombrokentobetter.com");
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+    setSent(true);
   };
 
   return (
@@ -84,8 +108,8 @@ export default function Contact() {
           {sent ? (
             <div className="success">
               <div style={{ fontSize: 40 }}>🌿</div>
-              <h3>We've got your message.</h3>
-              <p>We'll reach back to you within 24–48 hours<br />on the contact details you've shared.</p>
+              <h3>Thank you for reaching out.</h3>
+              <p>Rumi from our team will get back to you within 24 hours.</p>
             </div>
           ) : (
             <form onSubmit={onSubmit}>
@@ -124,7 +148,8 @@ export default function Contact() {
                 <textarea name="message" value={form.message} onChange={onChange} placeholder="Tell us what's on your mind. There's no wrong way to start." required />
               </div>
 
-              <button className="submit-btn" disabled={loading}>{loading ? "Sending..." : "Send Message"}</button>
+              {error && <p className="contact-error">{error}</p>}
+              <button className="submit-btn" disabled={loading}>{loading ? "Sending…" : "Send Message"}</button>
             </form>
           )}
 
