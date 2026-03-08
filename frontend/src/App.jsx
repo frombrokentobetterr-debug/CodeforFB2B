@@ -26,6 +26,7 @@ import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import AuthPage from "./pages/AuthPage";
+import AdminPage from "./pages/AdminPage";
 
 // Modals
 import AuthModal from "./components/AuthModal";
@@ -185,6 +186,7 @@ export default function App() {
           {/* Auth routes */}
           <Route path="/signin"   element={<AuthPage mode="login"  onLogin={handleLogin} onSignup={handleSignup} />} />
           <Route path="/register" element={<AuthPage mode="signup" onLogin={handleLogin} onSignup={handleSignup} />} />
+          <Route path="/admin"    element={<AdminPage />} />
         </Routes>
       </main>
 
