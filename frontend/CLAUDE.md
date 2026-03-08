@@ -1,19 +1,20 @@
 # From Broken To Better — Claude Code Project Context
 
-> This file is read automatically by Claude Code at the start of every session.
-> It contains everything needed to work on this codebase without re-explaining context.
+> Read this file at the start of every session before writing any code.
+> It contains the full project context, schema, routes, and current build state.
 
 ---
 
 ## Project Overview
 
-**Product:** Peer support + healing platform for people navigating separation and divorce in India.
-**Live URL:** https://frombrokentobetter.com
-**Admin email:** privacy@frombrokentobetter.com
-**GitHub → Vercel:** auto-deploys on push to `main`
+**Product:** Peer support and healing platform for people navigating separation and divorce in India.
+**Not a dating app.** Emotional support only. Users are matched with Peer Guides — real people who survived their own separation.
+**Live URL:** https://frombrokentobetter.com (no www — canonical is non-www)
+**GitHub → Vercel:** auto-deploys on every push to `main`
 
-This is NOT a dating app. It is an emotional support platform.
-Users are matched with "Peer Guides" — real people who survived their own separation.
+**Key contacts:**
+- Admin / user-facing errors: admin@frombrokentobetter.com
+- Privacy / GDPR / data requests only: privacy@frombrokentobetter.com
 
 ---
 
@@ -23,34 +24,38 @@ Users are matched with "Peer Guides" — real people who survived their own sepa
 |---|---|
 | Frontend | React 19 + Vite 8 |
 | Hosting | Vercel (auto-deploy from GitHub) |
-| Database | Supabase PostgreSQL (Singapore region) |
-| Auth | Supabase Auth (email/password) |
-| Edge Functions | Supabase Edge Functions (Deno) |
-| Payments | Razorpay (India — UPI + Cards) |
+| Database | Supabase PostgreSQL (Singapore — ap-southeast-1) |
+| Auth | Supabase Auth (email + password) |
+| Edge Functions | Supabase Edge Functions (Deno runtime) |
+| Payments | Razorpay (India — UPI + Cards + Net Banking) |
 | AI | Anthropic Claude API (claude-sonnet-4-6) |
-| Email | Resend.com (transactional) |
+| Email | Resend.com (transactional email) |
 | Routing | React Router v7 |
-| SEO | react-helmet-async |
-| Analytics | @vercel/analytics + @vercel/speed-insights |
+| SEO | react-helmet-async (Helmet on every page) |
+| Analytics | @vercel/analytics + @vercel/speed-insights (in App.jsx) |
 
 ---
 
-## Brand & Design
+## Brand
 
 ```
-Colors:
-  cream:      #f4ede3   (main background)
-  terracotta: #c4623a   (primary CTA, accents)
-  walnut:     #1c1410   (dark backgrounds, hero sections)
-  charcoal:   #2a1e18   (headings)
-  stone:      #8a7d74   (secondary text)
+Colours:
+  cream:      #f4ede3   ← main background
+  terracotta: #c4623a   ← primary CTA, buttons, accents
+  walnut:     #1c1410   ← dark hero sections, left panels
+  charcoal:   #2a1e18   ← headings
+  stone:      #8a7d74   ← secondary / muted text
+  warm-mid:   #a09080   ← tertiary text on dark backgrounds
 
 Fonts:
-  headings:  'Cormorant Garamond', serif  (font-weight 300/400)
-  body:      'Jost', sans-serif           (font-weight 200/300/400)
-  old body:  'DM Sans', sans-serif        (still used in some components)
+  headings:  'Cormorant Garamond', serif   (weight 300 / 400)
+  body:      'Jost', sans-serif            (weight 200 / 300 / 400)
+  legacy:    'DM Sans', sans-serif         (some older components — do not change)
 
-Tone: warm, compassionate, never clinical. People using this app are grieving.
+Tone: warm, compassionate, never clinical.
+People using this platform are grieving. Every word matters.
+Never use cold words like "error", "failed", "invalid" alone.
+Always follow with something human and helpful.
 ```
 
 ---
@@ -59,87 +64,63 @@ Tone: warm, compassionate, never clinical. People using this app are grieving.
 
 ```
 frontend/
-├── CLAUDE.md                        ← this file
-├── index.html                       ← SEO meta tags (landing page)
+├── CLAUDE.md                          ← this file — read every session
+├── index.html
 ├── package.json
 ├── vite.config.js
-├── vercel.json                      ← www→non-www redirect + SPA fallback
+├── vercel.json                        ← www→non-www redirect + SPA fallback
 ├── public/
 │   ├── robots.txt
 │   ├── sitemap.xml
-│   └── og-image.jpg                 ← 1200×630 Open Graph image
-├── src/
-│   ├── main.jsx                     ← entry point
-│   ├── App.jsx                      ← router, global state, auth handlers
-│   ├── App.css
-│   ├── index.css
-│   ├── lib/
-│   │   └── supabase.js              ← Supabase client (CREATE THIS FIRST)
-│   ├── api/
-│   │   └── healingPath.js           ← calls Edge Function for AI healing path
-│   ├── styles/
-│   │   └── theme.js                 ← THEME object + globalCSS string
-│   ├── data/
-│   │   ├── articles.js              ← 6 hardcoded articles (migrate to DB later)
-│   │   ├── events.js                ← 6 hardcoded events
-│   │   └── features.js              ← landing page feature cards
-│   ├── assets/
-│   │   └── icons/
-│   │       └── open-door.svg        ← brand icon
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── Nav.jsx              ← fixed top nav (needs auth awareness)
-│   │   │   └── Footer.jsx           ← site footer
-│   │   ├── blog/
-│   │   │   ├── BlogPage.jsx         ← journal listing
-│   │   │   └── ArticlePage.jsx      ← single article view
-│   │   ├── LandingPage.jsx          ← home page (/)
-│   │   ├── AuthModal.jsx            ← login/signup overlay modal
-│   │   ├── OnboardingFlow.jsx       ← 6-question healing assessment
-│   │   ├── Dashboard.jsx            ← post-onboarding user dashboard
-│   │   ├── BookingModal.jsx         ← event booking + payment UI
-│   │   ├── EventsPage.jsx           ← all events listing
-│   │   ├── GiveBackPage.jsx         ← community story submission
-│   │   └── LearnHowModal.jsx        ← feature explainer modal
-│   └── pages/
-│       ├── About.jsx
-│       ├── MeetYourPeer.jsx         ← seeker intake form (MOST IMPORTANT)
-│       ├── Contact.jsx
-│       ├── AuthPage.jsx             ← standalone /signin and /register pages
-│       ├── PrivacyPolicy.jsx
-│       └── Terms.jsx
+│   └── og-image.jpg                   ← 1200×630 Open Graph image
+└── src/
+    ├── main.jsx
+    ├── App.jsx                        ← router + global auth state
+    ├── index.css
+    ├── lib/
+    │   └── supabase.js                ← single Supabase client — ALWAYS import from here
+    ├── api/
+    │   └── healingPath.js             ← calls Edge Function for AI healing path
+    ├── styles/
+    │   └── theme.js                   ← THEME object + globalCSS (do not rename classes)
+    ├── data/
+    │   ├── articles.js                ← 6 hardcoded articles (migrate to DB — Month 2)
+    │   ├── events.js                  ← 6 hardcoded events
+    │   └── features.js                ← landing page feature cards
+    ├── assets/
+    │   └── icons/
+    │       └── open-door.svg
+    ├── components/
+    │   ├── layout/
+    │   │   ├── Nav.jsx                ← fixed top nav (needs auth awareness — see broken list)
+    │   │   └── Footer.jsx
+    │   ├── blog/
+    │   │   ├── BlogPage.jsx           ← journal listing (hardcoded — fix Month 2)
+    │   │   └── ArticlePage.jsx        ← single article view
+    │   ├── LandingPage.jsx
+    │   ├── AuthModal.jsx              ← login/signup overlay (uses mockDB — broken)
+    │   ├── OnboardingFlow.jsx         ← 6-question healing assessment (broken)
+    │   ├── Dashboard.jsx              ← user dashboard (loses data on refresh — broken)
+    │   ├── BookingModal.jsx           ← event booking (fake payment — broken)
+    │   ├── EventsPage.jsx
+    │   ├── GiveBackPage.jsx           ← story submission (fake submit — broken)
+    │   └── LearnHowModal.jsx
+    └── pages/
+        ├── About.jsx
+        ├── MeetYourPeer.jsx           ← seeker intake form (fake submit — broken)
+        ├── BecomeAGuide.jsx           ← peer guide application ✅ FULLY WORKING
+        ├── Contact.jsx                ← contact form (likely fake submit — broken)
+        ├── AuthPage.jsx               ← standalone signin/register (uses mockDB — broken)
+        ├── PrivacyPolicy.jsx
+        └── Terms.jsx
 ```
-
----
-
-## Environment Variables
-
-### Vercel (frontend — safe to expose to browser)
-```
-VITE_SUPABASE_URL          = https://[project-ref].supabase.co
-VITE_SUPABASE_ANON_KEY     = eyJ...  (anon/public key only)
-VITE_RAZORPAY_KEY_ID       = rzp_live_...  (public key only)
-VITE_HEALING_PATH_URL      = https://[project-ref].supabase.co/functions/v1/heal-path
-VITE_APP_URL               = https://frombrokentobetter.com
-```
-
-### Supabase Edge Function Secrets (NEVER in Vercel or frontend)
-```
-SUPABASE_SERVICE_ROLE_KEY  = eyJ...  (service role — admin access)
-RAZORPAY_KEY_SECRET        = rzp_live_...secret  (never in frontend)
-ANTHROPIC_API_KEY          = sk-ant-...
-RESEND_API_KEY             = re_...
-```
-
-> **Rule:** If a key is a "secret" or "private" — it goes in Supabase Edge Function secrets only.
-> Never put secret keys in Vercel env vars (they become readable in the browser bundle).
 
 ---
 
 ## Supabase Client
 
 ```javascript
-// src/lib/supabase.js  — create this file first before any other work
+// src/lib/supabase.js — create this before any other work
 import { createClient } from '@supabase/supabase-js'
 
 export const supabase = createClient(
@@ -148,280 +129,363 @@ export const supabase = createClient(
 )
 ```
 
-All components import from this single file:
+Every component imports from this one file. Never create a second Supabase client.
+
 ```javascript
-import { supabase } from '../lib/supabase'
-// or
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../lib/supabase'    // adjust relative path as needed
 ```
 
 ---
 
-## Current Broken Workflows (what needs to be fixed)
+## Environment Variables
 
-Every form in this app currently uses `setTimeout` as a fake submit. Nothing is saved.
+### Vercel (safe — public, visible in browser)
+```
+VITE_SUPABASE_URL          = https://[project-ref].supabase.co
+VITE_SUPABASE_ANON_KEY     = eyJ...  (anon/public key only)
+VITE_RAZORPAY_KEY_ID       = rzp_live_...  (public key only)
+VITE_HEALING_PATH_URL      = https://[project-ref].supabase.co/functions/v1/heal-path
+VITE_APP_URL               = https://frombrokentobetter.com
+```
 
-| File | Broken Line | What It Should Do |
+### Supabase Edge Function secrets ONLY (never in Vercel, never in any JS file)
+```
+SUPABASE_SERVICE_ROLE_KEY  ← admin DB access
+RAZORPAY_KEY_SECRET        ← payment secret key
+ANTHROPIC_API_KEY          ← Claude API key
+RESEND_API_KEY             ← email sending key
+```
+
+---
+
+## All Routes
+
+| Path | Component | Auth Required | Status |
+|---|---|---|---|
+| `/` | LandingPage | No | ✅ Live |
+| `/about` | About | No | ✅ Live |
+| `/meet-your-peer` | MeetYourPeer | Soft | ⚠️ Fake submit |
+| `/become-a-guide` | BecomeAGuide | Yes (AuthModal gate) | ✅ Working |
+| `/contact` | Contact | No | ⚠️ Likely fake submit |
+| `/privacy-policy` | PrivacyPolicy | No | ✅ Live |
+| `/terms` | Terms | No | ✅ Live |
+| `/events` | EventsPage | No | ⚠️ Fake payment |
+| `/journal` | BlogPage | No | ⚠️ Hardcoded data |
+| `/journal/:slug` | ArticlePage | No | ⚠️ No slug routing yet |
+| `/dashboard` | Dashboard | Yes → redirect / | ⚠️ Loses data on refresh |
+| `/give-back` | GiveBackPage | No | ⚠️ Fake submit |
+| `/signin` | AuthPage (login) | No | ⚠️ Uses mockDB |
+| `/register` | AuthPage (signup) | No | ⚠️ Uses mockDB |
+| `/admin` | AdminPage | Yes + role=admin | ❌ File does not exist yet |
+
+---
+
+## Auth Pattern
+
+```javascript
+// App.jsx — persistent session on page load
+useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setUser(session?.user ?? null)
+  })
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    (_event, session) => setUser(session?.user ?? null)
+  )
+  return () => subscription.unsubscribe()
+}, [])
+
+// Get display name safely
+const displayName = user?.user_metadata?.full_name?.split(' ')[0]
+                 ?? user?.email?.split('@')[0]
+                 ?? 'friend'
+
+// Check admin
+const isAdmin = user?.user_metadata?.role === 'admin'
+```
+
+```javascript
+// Sign up
+await supabase.auth.signUp({
+  email,
+  password,
+  options: { data: { full_name: name } }
+})
+
+// Sign in
+await supabase.auth.signInWithPassword({ email, password })
+
+// Sign out
+await supabase.auth.signOut()
+```
+
+---
+
+## All Broken Workflows
+
+Every form currently uses `setTimeout` as a fake submit. Nothing is saved anywhere.
+**BecomeAGuide.jsx is the only correctly wired form. Use it as the reference pattern.**
+
+| File | Broken Line | What It Needs |
 |---|---|---|
+| `App.jsx` | `const mockDB = { users: {} }` | Remove. Use `onAuthStateChange` |
 | `AuthModal.jsx` | `mockDB.users[email]` | `supabase.auth.signInWithPassword()` |
-| `AuthPage.jsx` | `mockDB.users[loginEmail]` | `supabase.auth.signUp/signInWithPassword()` |
-| `App.jsx` | `const mockDB = { users: {} }` | Remove entirely, use `supabase.auth.onAuthStateChange` |
-| `OnboardingFlow.jsx` | `fetch('http://localhost:3001/...')` | Supabase Edge Function URL from env var |
+| `AuthPage.jsx` | `mockDB.users[loginEmail]` | `supabase.auth.signUp / signInWithPassword` |
+| `api/healingPath.js` | `fetch('http://localhost:3001/...')` | Call `VITE_HEALING_PATH_URL` from env |
+| `OnboardingFlow.jsx` | answers not saved | `supabase.from('healing_paths').insert(...)` |
 | `MeetYourPeer.jsx` | `setTimeout(() => setSent(true), 1000)` | `supabase.from('seeker_profiles').insert(...)` |
 | `GiveBackPage.jsx` | `setTimeout(() => setSubmitted(true), 1200)` | `supabase.from('journal_posts').insert(...)` |
-| `BookingModal.jsx` | `setTimeout(() => setSuccess(true), 1800)` | Real Razorpay checkout |
-| `Contact.jsx` | likely same setTimeout pattern | `supabase.from('contact_messages').insert(...)` |
-
-**The single most important fix:** Create `src/lib/supabase.js` then replace `mockDB` in `App.jsx`.
+| `BookingModal.jsx` | `setTimeout(() => setSuccess(true), 1800)` | Real Razorpay via Edge Function |
+| `Contact.jsx` | likely setTimeout | `supabase.from('contact_messages').insert(...)` |
+| `Dashboard.jsx` | state lost on refresh | Load from `healing_paths` on mount |
+| `Nav.jsx` | no auth awareness | Show user name + logout when signed in |
 
 ---
 
 ## Database Schema
 
-Supabase project region: **ap-southeast-1 (Singapore)**
-All tables have RLS enabled. Users only see their own data unless role = 'admin'.
+**Rule: every table must have RLS enabled.**
 
-### Table: users
-*Note: Supabase Auth manages `auth.users`. This table is a mirror with extra fields.*
+---
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK, mirrors auth.users.id |
-| email | VARCHAR(255) | Yes | — | UNIQUE, from auth |
-| role | VARCHAR(20) | Yes | 'seeker' | seeker / guide / practitioner / admin |
-| full_name | VARCHAR(255) | Yes | — | |
-| phone | VARCHAR(20) | No | NULL | |
-| is_verified | BOOLEAN | Yes | false | email verified |
-| is_active | BOOLEAN | Yes | true | soft delete |
-| created_at | TIMESTAMPTZ | Yes | now() | |
-| updated_at | TIMESTAMPTZ | Yes | now() | |
+### users
 
 ```sql
--- RLS policies for users table
+CREATE TABLE users (
+  id           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email        VARCHAR(255) NOT NULL UNIQUE,
+  role         VARCHAR(20)  NOT NULL DEFAULT 'seeker',
+  full_name    VARCHAR(255) NOT NULL,
+  phone        VARCHAR(20),
+  is_verified  BOOLEAN NOT NULL DEFAULT false,
+  is_active    BOOLEAN NOT NULL DEFAULT true,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users read own row" ON users FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users update own row" ON users FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Admin reads all" ON users FOR ALL USING (
+CREATE POLICY "Users read own"   ON users FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users update own" ON users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admin full"       ON users FOR ALL USING (
   EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
 );
 ```
 
+Roles: `seeker` / `guide` / `practitioner` / `admin`
+
 ---
 
-### Table: seeker_profiles
-*Created when a seeker submits the MeetYourPeer form.*
+### seeker_profiles
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| user_id | UUID | No | NULL | FK → auth.users.id (nullable — anonymous ok) |
-| full_name | VARCHAR(255) | Yes | — | from form |
-| email | VARCHAR(255) | Yes | — | from form |
-| phone | VARCHAR(20) | No | NULL | from form |
-| what_hurts | TEXT | Yes | — | their story — most important field |
-| separation_type | VARCHAR(50) | No | NULL | divorce / separation / breakup / other |
-| religion | VARCHAR(50) | No | NULL | |
-| children_involved | BOOLEAN | No | NULL | |
-| separation_timeline | VARCHAR(50) | No | NULL | |
-| emotional_state | INTEGER | No | NULL | 1–10 scale |
-| matching_status | VARCHAR(20) | Yes | 'pending' | pending / matched / closed |
-| matched_guide_id | UUID | No | NULL | FK → peer_guide_profiles.id |
-| created_at | TIMESTAMPTZ | Yes | now() | |
+Created when a seeker submits the MeetYourPeer form.
 
 ```sql
+CREATE TABLE seeker_profiles (
+  id                   UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id              UUID REFERENCES auth.users(id),
+  full_name            VARCHAR(255) NOT NULL,
+  email                VARCHAR(255) NOT NULL,
+  phone                VARCHAR(20),
+  what_hurts           TEXT NOT NULL,
+  separation_type      VARCHAR(50),
+  religion             VARCHAR(50),
+  children_involved    BOOLEAN,
+  separation_timeline  VARCHAR(50),
+  emotional_state      INTEGER CHECK (emotional_state BETWEEN 1 AND 10),
+  matching_status      VARCHAR(20) NOT NULL DEFAULT 'pending',
+  matched_guide_id     UUID,
+  created_at           TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 ALTER TABLE seeker_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Seeker reads own" ON seeker_profiles FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Seeker inserts own" ON seeker_profiles FOR INSERT WITH CHECK (true); -- allow anon
-CREATE POLICY "Admin reads all" ON seeker_profiles FOR ALL USING (
+CREATE POLICY "Seeker reads own"  ON seeker_profiles FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Anyone can insert" ON seeker_profiles FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin full"        ON seeker_profiles FOR ALL USING (
   EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
 );
 ```
 
+`matching_status` values: `pending` / `matched` / `closed`
+
 ---
 
-### Table: healing_paths
-*Created after user completes the 6-question onboarding assessment.*
+### healing_paths
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| user_id | UUID | Yes | — | FK → auth.users.id, UNIQUE |
-| answers | JSONB | Yes | — | array of 6 answers |
-| phase | VARCHAR(20) | Yes | — | Stabilizing / Processing / Rebuilding / Thriving |
-| summary | TEXT | Yes | — | AI-generated 2–3 sentence summary |
-| focus_areas | TEXT[] | Yes | — | array of 3 focus areas |
-| recommended_event | VARCHAR(100) | No | NULL | event title for dashboard |
-| insight | TEXT | No | NULL | personalized encouraging sentence |
-| next_step | TEXT | No | NULL | one concrete action for today |
-| created_at | TIMESTAMPTZ | Yes | now() | |
-| updated_at | TIMESTAMPTZ | Yes | now() | |
+Created after 6-question onboarding assessment.
 
 ```sql
+CREATE TABLE healing_paths (
+  id                 UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id            UUID NOT NULL UNIQUE REFERENCES auth.users(id),
+  answers            JSONB NOT NULL,
+  phase              VARCHAR(20) NOT NULL,
+  summary            TEXT NOT NULL,
+  focus_areas        TEXT[] NOT NULL,
+  recommended_event  VARCHAR(100),
+  insight            TEXT,
+  next_step          TEXT,
+  created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at         TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 ALTER TABLE healing_paths ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "User reads own" ON healing_paths FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "User upserts own" ON healing_paths FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "User reads own"   ON healing_paths FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "User inserts own" ON healing_paths FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "User updates own" ON healing_paths FOR UPDATE USING (auth.uid() = user_id);
 ```
 
+`phase` values: `Stabilizing` / `Processing` / `Rebuilding` / `Thriving`
+
 ---
 
-### Table: peer_guide_profiles
-*Filled by community members who want to become Peer Guides.*
+### peer_guide_profiles
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| user_id | UUID | Yes | — | FK → auth.users.id |
-| bio | TEXT | Yes | — | their story / why they want to help |
-| separation_type_experienced | VARCHAR(50) | No | NULL | |
-| languages_spoken | TEXT[] | No | '{}' | |
-| is_available | BOOLEAN | Yes | true | |
-| session_rate_inr | INTEGER | No | NULL | rate in rupees |
-| avg_rating | NUMERIC(3,2) | No | NULL | 0.00–5.00 |
-| is_approved_by_admin | BOOLEAN | Yes | false | must be true to appear in matches |
-| created_at | TIMESTAMPTZ | Yes | now() | |
+Filled by community members via /become-a-guide.
+**`is_approved_by_admin` defaults to `true` — guides go live immediately without manual approval.**
 
 ```sql
+CREATE TABLE peer_guide_profiles (
+  id                           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id                      UUID NOT NULL REFERENCES auth.users(id),
+  bio                          TEXT NOT NULL,
+  separation_type_experienced  VARCHAR(50),
+  languages_spoken             TEXT[] DEFAULT '{}',
+  is_available                 BOOLEAN NOT NULL DEFAULT true,
+  session_rate_inr             INTEGER,
+  photo_url                    TEXT,
+  avg_rating                   NUMERIC(3,2),
+  is_approved_by_admin         BOOLEAN NOT NULL DEFAULT true,
+  created_at                   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 ALTER TABLE peer_guide_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Guide reads own" ON peer_guide_profiles FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Guide inserts own" ON peer_guide_profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Approved guides visible to all" ON peer_guide_profiles
-  FOR SELECT USING (is_approved_by_admin = true);
-CREATE POLICY "Admin manages all" ON peer_guide_profiles FOR ALL USING (
+CREATE POLICY "Guide reads own"         ON peer_guide_profiles FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Guide inserts own"       ON peer_guide_profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Approved visible to all" ON peer_guide_profiles FOR SELECT USING (is_approved_by_admin = true);
+CREATE POLICY "Admin full"              ON peer_guide_profiles FOR ALL USING (
   EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
 );
 ```
 
+`photo_url` comes from Supabase Storage bucket: `guide-photos` (public bucket).
+
 ---
 
-### Table: journal_posts
-*Both community-submitted stories (GiveBackPage) and editorial articles.*
+### journal_posts
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| author_id | UUID | No | NULL | FK → auth.users.id (nullable for anon) |
-| author_name | VARCHAR(255) | No | NULL | display name |
-| author_email | VARCHAR(255) | No | NULL | for admin contact |
-| slug | VARCHAR(255) | No | NULL | UNIQUE, URL: /journal/:slug |
-| title | VARCHAR(500) | No | NULL | |
-| content | TEXT | Yes | — | full article body |
-| excerpt | TEXT | No | NULL | 1–2 sentence preview |
-| emoji | VARCHAR(10) | No | '🌿' | card display emoji |
-| tag | VARCHAR(50) | No | NULL | Healing / Grief / Identity etc |
-| tag_color | VARCHAR(30) | No | NULL | rgba CSS value |
-| tag_text_color | VARCHAR(10) | No | NULL | hex CSS value |
-| read_time_minutes | INTEGER | No | NULL | |
-| emotion_tags | TEXT[] | No | '{}' | for matching |
-| is_anonymous | BOOLEAN | Yes | false | hide author name |
-| status | VARCHAR(20) | Yes | 'pending_review' | draft / pending_review / published |
-| author_type | VARCHAR(20) | No | 'community' | community / editorial |
-| reviewed_by | UUID | No | NULL | FK → auth.users.id (admin) |
-| published_at | TIMESTAMPTZ | No | NULL | set when status → published |
-| created_at | TIMESTAMPTZ | Yes | now() | |
+Both community stories (GiveBackPage) and editorial articles (BlogPage).
 
 ```sql
+CREATE TABLE journal_posts (
+  id                 UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  author_id          UUID REFERENCES auth.users(id),
+  author_name        VARCHAR(255),
+  author_email       VARCHAR(255),
+  slug               VARCHAR(255) UNIQUE,
+  title              VARCHAR(500),
+  content            TEXT NOT NULL,
+  excerpt            TEXT,
+  emoji              VARCHAR(10) DEFAULT '🌿',
+  tag                VARCHAR(50),
+  tag_color          VARCHAR(30),
+  tag_text_color     VARCHAR(10),
+  read_time_minutes  INTEGER,
+  emotion_tags       TEXT[] DEFAULT '{}',
+  is_anonymous       BOOLEAN NOT NULL DEFAULT false,
+  status             VARCHAR(20) NOT NULL DEFAULT 'pending_review',
+  author_type        VARCHAR(20) DEFAULT 'community',
+  reviewed_by        UUID REFERENCES auth.users(id),
+  published_at       TIMESTAMPTZ,
+  created_at         TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 ALTER TABLE journal_posts ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone reads published" ON journal_posts
-  FOR SELECT USING (status = 'published');
-CREATE POLICY "Author reads own" ON journal_posts
-  FOR SELECT USING (auth.uid() = author_id);
-CREATE POLICY "Anyone inserts pending" ON journal_posts
-  FOR INSERT WITH CHECK (status = 'pending_review');
-CREATE POLICY "Admin manages all" ON journal_posts FOR ALL USING (
+CREATE POLICY "Anyone reads published" ON journal_posts FOR SELECT USING (status = 'published');
+CREATE POLICY "Author reads own"       ON journal_posts FOR SELECT USING (auth.uid() = author_id);
+CREATE POLICY "Anyone inserts pending" ON journal_posts FOR INSERT WITH CHECK (status = 'pending_review');
+CREATE POLICY "Admin full"             ON journal_posts FOR ALL USING (
   EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
 );
 ```
 
+`status` values: `draft` / `pending_review` / `published`
+
 ---
 
-### Table: sessions
-*A booked event or 1:1 session.*
+### sessions
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| user_id | UUID | Yes | — | FK → auth.users.id (the payer/attendee) |
-| event_id | INTEGER | No | NULL | matches id in data/events.js (until events move to DB) |
-| event_title | VARCHAR(255) | Yes | — | copied at booking time |
-| price_inr | INTEGER | Yes | — | amount in paise × 100 for Razorpay |
-| razorpay_order_id | VARCHAR(100) | No | NULL | from create-order Edge Function |
-| razorpay_payment_id | VARCHAR(100) | No | NULL | from verify-payment webhook |
-| booking_ref | VARCHAR(20) | No | NULL | human-readable e.g. FBTB-2026-001 |
-| status | VARCHAR(20) | Yes | 'pending' | pending / confirmed / cancelled / refunded |
-| created_at | TIMESTAMPTZ | Yes | now() | |
+Event bookings and 1:1 session records.
 
 ```sql
+CREATE TABLE sessions (
+  id                   UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id              UUID NOT NULL REFERENCES auth.users(id),
+  event_title          VARCHAR(255) NOT NULL,
+  price_inr            INTEGER NOT NULL,
+  razorpay_order_id    VARCHAR(100),
+  razorpay_payment_id  VARCHAR(100),
+  booking_ref          VARCHAR(20),
+  status               VARCHAR(20) NOT NULL DEFAULT 'pending',
+  created_at           TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "User reads own sessions" ON sessions FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "System inserts" ON sessions FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Admin reads all" ON sessions FOR ALL USING (
+CREATE POLICY "User reads own"  ON sessions FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "User inserts"    ON sessions FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admin full"      ON sessions FOR ALL USING (
   EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
 );
 ```
 
+`status` values: `pending` / `confirmed` / `cancelled` / `refunded`
+
 ---
 
-### Table: contact_messages
-*From the Contact page form.*
+### contact_messages
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| name | VARCHAR(255) | Yes | — | |
-| email | VARCHAR(255) | Yes | — | |
-| phone | VARCHAR(20) | No | NULL | |
-| subject | VARCHAR(255) | No | NULL | |
-| message | TEXT | Yes | — | |
-| created_at | TIMESTAMPTZ | Yes | now() | |
+From the /contact page form.
 
 ```sql
+CREATE TABLE contact_messages (
+  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name        VARCHAR(255) NOT NULL,
+  email       VARCHAR(255) NOT NULL,
+  phone       VARCHAR(20),
+  subject     VARCHAR(255),
+  message     TEXT NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
--- No user-level auth needed — public form
 CREATE POLICY "Anyone inserts" ON contact_messages FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin reads all" ON contact_messages FOR ALL USING (
+CREATE POLICY "Admin full"     ON contact_messages FOR ALL USING (
   EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
 );
 ```
 
 ---
 
-### Table: matches
-*Admin-created or algorithm-created pairing of seeker ↔ guide.*
+### notifications
 
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| seeker_id | UUID | Yes | — | FK → seeker_profiles.id |
-| guide_id | UUID | Yes | — | FK → peer_guide_profiles.id |
-| matched_by | VARCHAR(20) | Yes | 'admin' | admin / algorithm |
-| match_score | INTEGER | No | NULL | 0–100 |
-| match_reasons | TEXT[] | No | '{}' | why matched |
-| status | VARCHAR(20) | Yes | 'pending' | pending / active / completed / declined |
-| created_at | TIMESTAMPTZ | Yes | now() | |
+```sql
+CREATE TABLE notifications (
+  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id     UUID NOT NULL REFERENCES auth.users(id),
+  type        VARCHAR(50) NOT NULL,
+  title       VARCHAR(255) NOT NULL,
+  body        TEXT,
+  link_to     VARCHAR(500),
+  is_read     BOOLEAN NOT NULL DEFAULT false,
+  sent_email  BOOLEAN NOT NULL DEFAULT false,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "User reads own" ON notifications FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Admin full"     ON notifications FOR ALL USING (
+  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
+);
+```
 
----
-
-### Table: notifications
-*In-app notification queue.*
-
-| Column | Type | Required | Default | Notes |
-|---|---|---|---|---|
-| id | UUID | Yes | gen_random_uuid() | PK |
-| user_id | UUID | Yes | — | FK → auth.users.id |
-| type | VARCHAR(50) | Yes | — | match_found / session_confirmed / story_approved |
-| title | VARCHAR(255) | Yes | — | |
-| body | TEXT | No | NULL | |
-| link_to | VARCHAR(500) | No | NULL | URL to navigate to |
-| is_read | BOOLEAN | Yes | false | |
-| sent_email | BOOLEAN | Yes | false | whether email also sent via Resend |
-| created_at | TIMESTAMPTZ | Yes | now() | |
+`type` values: `match_found` / `session_confirmed` / `story_approved`
 
 ---
 
 ## Admin Role Setup
 
-To make a user an admin, run this SQL in Supabase SQL Editor:
+Run once in Supabase SQL Editor:
+
 ```sql
 UPDATE auth.users
 SET raw_user_meta_data = jsonb_set(
@@ -432,144 +496,156 @@ SET raw_user_meta_data = jsonb_set(
 WHERE email = 'YOUR_EMAIL_HERE';
 ```
 
-Check admin in components:
-```javascript
-const isAdmin = user?.user_metadata?.role === 'admin'
-```
-
----
-
-## Routes (App.jsx)
-
-| Path | Component | Auth Required |
-|---|---|---|
-| `/` | LandingPage | No |
-| `/about` | About | No |
-| `/meet-your-peer` | MeetYourPeer | Soft (prompt to sign up) |
-| `/contact` | Contact | No |
-| `/privacy-policy` | PrivacyPolicy | No |
-| `/terms` | Terms | No |
-| `/events` | EventsPage | No (soft for booking) |
-| `/journal` | BlogPage | No |
-| `/journal/:slug` | ArticlePage | No |
-| `/dashboard` | Dashboard | Yes → redirect / |
-| `/give-back` | GiveBackPage | No |
-| `/signin` | AuthPage mode=login | No |
-| `/register` | AuthPage mode=signup | No |
-| `/admin` | AdminPage | Yes + role=admin |
-
----
-
-## Auth Pattern (after WF1 is fixed)
-
-```javascript
-// In App.jsx — session persistence on mount
-useEffect(() => {
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    setUser(session?.user ?? null)
-  })
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-    setUser(session?.user ?? null)
-  })
-  return () => subscription.unsubscribe()
-}, [])
-```
-
-```javascript
-// Get user name safely (Supabase stores name in user_metadata)
-const displayName = user?.user_metadata?.full_name?.split(' ')[0]
-               ?? user?.email?.split('@')[0]
-               ?? 'friend'
-```
-
 ---
 
 ## Edge Functions
 
-All Edge Functions live in `supabase/functions/` folder.
-Deploy with: `supabase functions deploy FUNCTION_NAME`
+Location: `supabase/functions/`
+Deploy: `supabase functions deploy FUNCTION_NAME`
+All functions need CORS headers for `http://localhost:5173`.
 
-### heal-path
-Accepts: `{ answers: string[] }` (6 onboarding answers)
-Returns: `{ summary, phase, focusAreas, recommendedEvent, insight, nextStep }`
-Calls: Anthropic Claude API with compassionate system prompt
-Secret needed: `ANTHROPIC_API_KEY`
-
-### create-razorpay-order
-Accepts: `{ amount_inr: number, event_title: string, user_id: string }`
-Returns: `{ order_id, amount, currency }`
-Calls: Razorpay Orders API
-Secret needed: `RAZORPAY_KEY_SECRET`
-
-### verify-payment
-Accepts: Razorpay webhook payload
-Validates: HMAC signature with `RAZORPAY_KEY_SECRET`
-Updates: sessions table status → 'confirmed'
-
-### send-notification
-Accepts: `{ to: string, subject: string, html: string }`
-Calls: Resend API
-Secret needed: `RESEND_API_KEY`
+| Function | What It Does | Needs Secret |
+|---|---|---|
+| `heal-path` | Calls Claude API with 6 onboarding answers, returns healing path JSON | ANTHROPIC_API_KEY |
+| `create-razorpay-order` | Creates Razorpay order server-side | RAZORPAY_KEY_SECRET |
+| `verify-payment` | Validates Razorpay webhook, updates sessions table | RAZORPAY_KEY_SECRET |
+| `send-notification` | Sends email via Resend | RESEND_API_KEY |
 
 ---
 
-## CSS Classes (existing — do not change names)
+## Supabase Storage
+
+| Bucket name | Public | Used for |
+|---|---|---|
+| `guide-photos` | YES | Peer guide profile photos from BecomeAGuide.jsx |
+
+Create in: Supabase Dashboard → Storage → New bucket → toggle Public ON.
+
+---
+
+## CSS Class Names (never rename these)
 
 ```
-Layout:    .app-container, .section, .section-tag, .section-title, .section-sub
-Nav:       .nav, .nav-inner, .nav-logo, .nav-links, .nav-cta, .nav-hamburger, .nav-mobile
-Buttons:   .btn-primary, .btn-secondary, .nav-btn
-Auth:      .auth-overlay, .auth-card, .auth-title, .auth-sub, .form-group,
-           .form-label, .form-input, .form-btn, .auth-switch, .error-msg
-Onboard:   .onboarding-overlay, .onboarding-card, .progress-bar, .progress-fill,
-           .q-step, .q-text, .q-options, .q-option, .q-option.selected,
-           .q-textarea, .q-nav, .q-back, .q-next, .spinner
-Dashboard: .dashboard, .dashboard-header, .dashboard-greeting, .healing-phase,
-           .phase-label, .phase-title, .phase-summary, .phase-insight,
-           .dash-grid, .dash-card, .card-btn, .card-btn-primary, .card-btn-outline
-Events:    .events-page, .events-grid, .event-card, .event-card-body, .event-tag
-Blog:      .blog-page, .blog-grid, .blog-card, .article-page, .article-title
-Modal:     .modal-overlay, .modal-card, .stripe-field, .stripe-row, .stripe-secure
-Footer:    .footer, .footer-main, .footer-brand, .footer-nav, .footer-copy
+Layout:    .app-container .section .section-tag .section-title .section-sub
+Nav:       .nav .nav-inner .nav-logo .nav-links .nav-cta .nav-hamburger .nav-mobile
+Buttons:   .btn-primary .btn-secondary .nav-btn
+Auth:      .auth-overlay .auth-card .auth-title .auth-sub .form-group
+           .form-label .form-input .form-btn .auth-switch .error-msg
+Onboard:   .onboarding-overlay .onboarding-card .progress-bar .progress-fill
+           .q-step .q-text .q-options .q-option .q-option.selected
+           .q-textarea .q-nav .q-back .q-next .spinner
+Dashboard: .dashboard .dashboard-header .dashboard-greeting .healing-phase
+           .phase-label .phase-title .phase-summary .phase-insight
+           .dash-grid .dash-card .card-btn .card-btn-primary .card-btn-outline
+Events:    .events-page .events-grid .event-card .event-card-body .event-tag
+Blog:      .blog-page .blog-grid .blog-card .article-page .article-title
+Modal:     .modal-overlay .modal-card .stripe-field .stripe-row .stripe-secure
+Footer:    .footer .footer-main .footer-brand .footer-nav .footer-copy
+Guide:     .guide .guide-split .guide-left .guide-right .guide-traits
+           .guide-trait .gt-num .gt-text .gf-group .gf-checks .gf-check
+           .gf-toggle-row .gf-toggle .gf-toggle-slider .gf-hint
+           .gf-file-label .gf-file-text .guide-btn .guide-error .guide-success
 ```
 
 ---
 
-## Important Constraints
+## Crisis Resources
 
-1. **Never change CSS class names** — they are used across multiple components via globalCSS in theme.js
-2. **Never put secret keys in Vercel** — only `VITE_` prefixed public keys go there
-3. **Always use the single supabase client** from `src/lib/supabase.js` — never create a new one
-4. **User name field** is `user.user_metadata?.full_name` not `user.name` (Supabase convention)
-5. **Emotional tone** — this platform serves people in grief. Error messages, loading text, and UI copy must always be warm and compassionate. Never use words like "error", "failed", "invalid" without a gentle follow-up.
-6. **RLS on every table** — never create a table without Row Level Security enabled
-7. **CORS headers** — all Edge Functions need CORS headers for the Vite dev server (`http://localhost:5173`)
-
----
-
-## Crisis Resources (include in relevant UI)
+Include on any page where users discuss emotional distress:
 
 ```
 iCall:       9152987821
 Vandrevala:  1860-2662-345
 ```
 
-These must appear on any page where users discuss emotional distress.
+---
+
+## Hard Rules
+
+1. Never rename CSS classes — used across components via globalCSS in theme.js
+2. Never put secret keys in Vercel — only `VITE_` public keys go there
+3. Always import supabase from `src/lib/supabase.js` — never create a second client
+4. User name field is `user.user_metadata?.full_name` — not `user.name`
+5. Enable RLS on every table — no exceptions
+6. Every error message must be warm and human — never cold or technical
+7. User-facing error email: admin@frombrokentobetter.com
+8. Privacy / data request email: privacy@frombrokentobetter.com (Policy pages only)
+9. `is_approved_by_admin` defaults to `true` in peer_guide_profiles
+10. Never pass `created_at` in insert calls — Supabase sets it automatically
 
 ---
 
-## Build Order (what to do first)
+## The Correct Form Submit Pattern
 
+BecomeAGuide.jsx is the only working form. Copy this pattern for every other form:
+
+```javascript
+const onSubmit = async e => {
+  e.preventDefault()
+  setError('')
+  setLoading(true)
+
+  // 1. Check auth (remove if form allows anonymous)
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    setError('Please sign in first.')
+    setLoading(false)
+    return
+  }
+
+  // 2. Validate required fields here
+
+  // 3. Insert to Supabase
+  const { error: err } = await supabase
+    .from('table_name')
+    .insert({
+      user_id: session.user.id,
+      // ... other fields
+    })
+
+  setLoading(false)
+
+  if (err) {
+    setError(
+      'Something went wrong. Please try again or email admin@frombrokentobetter.com'
+    )
+  } else {
+    setSent(true)
+  }
+}
 ```
-1. Create src/lib/supabase.js
-2. Add VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY to Vercel
-3. Enable Email Auth in Supabase dashboard
-4. Replace mockDB in AuthModal.jsx → supabase.auth
-5. Replace mockDB in AuthPage.jsx → supabase.auth
-6. Fix App.jsx session persistence → onAuthStateChange
-7. Update Nav.jsx to show user + logout
-8. Create healing_paths table
-9. Deploy heal-path Edge Function
-10. Fix api/healingPath.js to call Edge Function
-... (see docs/workflow-tracker.xlsx for all 28 steps)
-```
+
+---
+
+## Build Order (28 steps — see docs/FBTB_Workflow_Tracker.xlsx for full detail)
+
+### Week 1 (do these first)
+1. Create Supabase project (Singapore region)
+2. Create `src/lib/supabase.js`
+3. Add env vars to Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+4. Enable Email Auth in Supabase dashboard
+5. Fix AuthModal.jsx → supabase.auth
+6. Fix AuthPage.jsx → supabase.auth
+7. Fix App.jsx → remove mockDB, add onAuthStateChange
+8. Fix Nav.jsx → show user + logout
+9. Create healing_paths table + RLS
+10. Deploy heal-path Edge Function
+11. Fix api/healingPath.js → call Edge Function
+12. Fix OnboardingFlow.jsx → save to healing_paths
+13. Fix Dashboard.jsx → load from healing_paths on mount
+14. Fix MeetYourPeer.jsx → insert to seeker_profiles
+15. Fix Contact.jsx → insert to contact_messages
+
+### Week 2
+16. Fix GiveBackPage.jsx → insert to journal_posts
+17. Build AdminPage.jsx (new file)
+18. Set admin role in Supabase for your account
+
+### Week 4
+19. Register Razorpay + KYC (start immediately — takes 2–7 days)
+20. Fix BookingModal.jsx → real Razorpay payment
+
+### Month 2
+21. Migrate articles.js → journal_posts table
+22. Fix BlogPage.jsx → fetch from Supabase
+23. Add /journal/:slug routing
