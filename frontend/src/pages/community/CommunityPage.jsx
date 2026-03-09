@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase";
 
 const PAGE_SIZE = 20;
 

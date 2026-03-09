@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { supabase } from "../lib/supabase";
-import AnswerBlurGate from "../components/AnswerBlurGate";
+import { supabase } from "../../lib/supabase";
+import AnswerBlurGate from "../../components/AnswerBlurGate";
 
 const relTime = iso => {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
