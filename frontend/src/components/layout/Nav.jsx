@@ -163,7 +163,7 @@ const styles = `
   }
 `;
 
-export default function Nav({ onStart, user, onLogout }) {
+export default function Nav({ onStart, onSignup, user, onLogout }) {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const active = path => pathname === path ? "active" : "";
@@ -176,8 +176,6 @@ export default function Nav({ onStart, user, onLogout }) {
     { to: "/meet-your-peer", label: "Meet Your Peer" },
     { to: "/contact", label: "Contact" },
   ];
-
-  const handleStart = () => { setOpen(false); onStart?.(); };
 
   return (
     <>
@@ -195,7 +193,7 @@ export default function Nav({ onStart, user, onLogout }) {
             ) : (
               <Link to="/signin" className={active("/signin")}>Sign In</Link>
             )}
-            <button className="nav-cta" onClick={handleStart}>Begin Healing</button>
+            <button className="nav-cta" onClick={() => { setOpen(false); onSignup?.(); }}>Sign Up</button>
           </div>
           <button className="nav-hamburger" onClick={() => setOpen(!open)} aria-label="Menu">
             <span /><span /><span />
@@ -208,7 +206,7 @@ export default function Nav({ onStart, user, onLogout }) {
           ) : (
             <Link to="/signin" onClick={() => setOpen(false)}>Sign In</Link>
           )}
-          <button className="nav-cta" onClick={handleStart}>Begin Healing</button>
+          <button className="nav-cta" onClick={() => { setOpen(false); onSignup?.(); }}>Sign Up</button>
         </div>
       </nav>
     </>

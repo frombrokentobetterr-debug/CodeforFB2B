@@ -137,21 +137,120 @@ const styles = `
   .admin-empty p { margin-top: 8px; font-size: 12px; color: #a09080; }
 
   .admin-null { color: #c9b99a; }
+
+  /* ── Match Creator ── */
+  .match-section {
+    margin-top: 48px;
+  }
+  .match-section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: #2a1e18;
+    margin-bottom: 4px;
+  }
+  .match-section-sub {
+    font-size: 11px;
+    color: #8a7d74;
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+  }
+  .match-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 24px rgba(42,30,24,0.09);
+    padding: 32px;
+    max-width: 680px;
+  }
+  .match-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .match-field label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #8a7d74;
+    margin-bottom: 6px;
+  }
+  .match-field select,
+  .match-field textarea {
+    width: 100%;
+    background: #fdf9f4;
+    border: 1px solid #e0d4c4;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #2a1e18;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    appearance: none;
+  }
+  .match-field select:focus,
+  .match-field textarea:focus { border-color: #c4623a; }
+  .match-field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  .match-field-full { margin-bottom: 20px; }
+
+  .match-btn {
+    background: #2a1e18;
+    color: #f4ede3;
+    border: none;
+    border-radius: 40px;
+    padding: 12px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .match-btn:hover { background: #c4623a; }
+  .match-btn:disabled { background: #c9b99a; cursor: not-allowed; }
+
+  .match-error { font-size: 12px; color: #c0392b; margin-top: 12px; }
+
+  .match-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    background: #eaf5ee;
+    border: 1px solid #7acd9a;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #2a6a48;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 600px) { .match-row { grid-template-columns: 1fr; } }
 `;
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const [rows, setRows]       = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(null); // id of row being updated
+  const [rows, setRows]         = useState([]);
+  const [guides, setGuides]     = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [updating, setUpdating] = useState(null);
+
+  // Match form state
+  const [matchForm, setMatchForm]       = useState({ seeker_id: "", guide_id: "", notes: "" });
+  const [matchLoading, setMatchLoading] = useState(false);
+  const [matchError, setMatchError]     = useState("");
+  const [matchDone, setMatchDone]       = useState(false);
 
   useEffect(() => {
     (async () => {
-      // 1. Must be logged in
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/"); return; }
 
-      // 2. Must be admin in public.users table
       const { data: profile } = await supabase
         .from("users")
         .select("role")
@@ -160,13 +259,20 @@ export default function AdminPage() {
 
       if (profile?.role !== "admin") { navigate("/"); return; }
 
-      // 3. Fetch seeker_profiles joined with users
-      const { data } = await supabase
-        .from("seeker_profiles")
-        .select("*, users(full_name, email)")
-        .order("created_at", { ascending: false });
+      const [{ data: seekers }, { data: guideData }] = await Promise.all([
+        supabase
+          .from("seeker_profiles")
+          .select("*, users(full_name, email)")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("peer_guide_profiles")
+          .select("id, bio, separation_type_experienced, users(full_name)")
+          .eq("is_available", true)
+          .eq("is_approved_by_admin", true),
+      ]);
 
-      setRows(data ?? []);
+      setRows(seekers ?? []);
+      setGuides(guideData ?? []);
       setLoading(false);
     })();
   }, [navigate]);
@@ -183,11 +289,50 @@ export default function AdminPage() {
     setUpdating(null);
   };
 
+  const createMatch = async e => {
+    e.preventDefault();
+    setMatchError("");
+    if (!matchForm.seeker_id || !matchForm.guide_id) {
+      setMatchError("Please select both a seeker and a guide.");
+      return;
+    }
+    setMatchLoading(true);
+
+    const { error: matchErr } = await supabase.from("matches").insert({
+      seeker_profile_id: matchForm.seeker_id,
+      guide_profile_id:  matchForm.guide_id,
+      notes:             matchForm.notes || null,
+      status:            "pending",
+      created_at:        new Date().toISOString(),
+    });
+
+    if (matchErr) {
+      setMatchError("Failed to create match. " + matchErr.message);
+      setMatchLoading(false);
+      return;
+    }
+
+    await supabase
+      .from("seeker_profiles")
+      .update({ matching_status: "matched" })
+      .eq("id", matchForm.seeker_id);
+
+    setRows(prev =>
+      prev.map(r => r.id === matchForm.seeker_id ? { ...r, matching_status: "matched" } : r)
+    );
+    setMatchForm({ seeker_id: "", guide_id: "", notes: "" });
+    setMatchLoading(false);
+    setMatchDone(true);
+    setTimeout(() => setMatchDone(false), 5000);
+  };
+
   const fmt = iso => new Date(iso).toLocaleDateString("en-IN", {
     day: "numeric", month: "short", year: "numeric",
   });
 
   const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : "";
+
+  const pendingSeekers = rows.filter(r => (r.matching_status ?? "pending") === "pending");
 
   if (loading) {
     return (
@@ -212,6 +357,8 @@ export default function AdminPage() {
         </div>
 
         <div className="admin-body">
+
+          {/* ── Seeker Table ── */}
           {rows.length === 0 ? (
             <div className="admin-empty">
               <div style={{ fontSize: 36 }}>🌿</div>
@@ -274,8 +421,76 @@ export default function AdminPage() {
               </table>
             </div>
           )}
-        </div>
 
+          {/* ── Match Creator ── */}
+          <div className="match-section">
+            <div className="match-section-title">Create a Match</div>
+            <div className="match-section-sub">
+              Pair a pending seeker with an available guide
+            </div>
+
+            <div className="match-card">
+              <form onSubmit={createMatch}>
+                <div className="match-row">
+                  <div className="match-field">
+                    <label>Seeker <span style={{ color: "#c9b99a" }}>({pendingSeekers.length} pending)</span></label>
+                    <select
+                      value={matchForm.seeker_id}
+                      onChange={e => setMatchForm(prev => ({ ...prev, seeker_id: e.target.value }))}
+                    >
+                      <option value="">Select seeker…</option>
+                      {pendingSeekers.map(s => (
+                        <option key={s.id} value={s.id}>
+                          {s.users?.full_name ?? s.users?.email ?? s.id.slice(0, 8)}
+                          {s.separation_type ? ` · ${s.separation_type.replace(/_/g, " ")}` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="match-field">
+                    <label>Guide <span style={{ color: "#c9b99a" }}>({guides.length} available)</span></label>
+                    <select
+                      value={matchForm.guide_id}
+                      onChange={e => setMatchForm(prev => ({ ...prev, guide_id: e.target.value }))}
+                    >
+                      <option value="">Select guide…</option>
+                      {guides.map(g => (
+                        <option key={g.id} value={g.id}>
+                          {g.users?.full_name ?? g.id.slice(0, 8)}
+                          {g.separation_type_experienced ? ` · ${g.separation_type_experienced.replace(/_/g, " ")}` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="match-field match-field-full">
+                  <label>Match Notes <span style={{ color: "#c9b99a", textTransform: "none", fontSize: 9 }}>(optional)</span></label>
+                  <textarea
+                    value={matchForm.notes}
+                    onChange={e => setMatchForm(prev => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Why this pairing? Any context for the guide…"
+                  />
+                </div>
+
+                {matchError && <p className="match-error">{matchError}</p>}
+
+                <button className="match-btn" disabled={matchLoading}>
+                  {matchLoading ? "Creating match…" : "Create Match →"}
+                </button>
+
+                {matchDone && (
+                  <div className="match-toast">
+                    <span>✓</span>
+                    Match created — seeker status updated to Matched.
+                  </div>
+                )}
+              </form>
+            </div>
+          </div>
+
+        </div>
       </div>
     </>
   );

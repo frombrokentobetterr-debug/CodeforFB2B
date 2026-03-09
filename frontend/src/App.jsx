@@ -144,7 +144,7 @@ export default function App() {
   return (
     <HelmetProvider>
     <div className="app-container" style={{ maxWidth: "100vw", overflowX: "hidden", display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Nav onStart={() => setShowOnboarding(true)} user={user} onLogout={handleLogout} />
+      <Nav onStart={() => setShowOnboarding(true)} onSignup={() => openAuth("signup")} user={user} onLogout={handleLogout} />
 
       <main style={{ flex: 1 }}>
         <Routes>
