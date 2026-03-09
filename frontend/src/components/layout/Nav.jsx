@@ -172,6 +172,7 @@ export default function Nav({ onStart, onSignup, user, onLogout }) {
   const links = [
     { to: "/about", label: "About" },
     { to: "/events", label: "Events" },
+    { to: "/community", label: "Community" },
     { to: "/journal", label: "Journal" },
     { to: "/meet-your-peer", label: "Meet Your Peer" },
     { to: "/contact", label: "Contact" },

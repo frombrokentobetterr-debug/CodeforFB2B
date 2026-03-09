@@ -28,6 +28,9 @@ import Terms from "./pages/Terms";
 import AuthPage from "./pages/AuthPage";
 import AdminPage from "./pages/AdminPage";
 import BecomeAGuide from "./pages/BecomeAGuide";
+import CommunityPage from "./pages/community/CommunityPage";
+import QuestionPage from "./pages/community/QuestionPage";
+import AskQuestion from "./pages/community/AskQuestion";
 
 // Modals
 import AuthModal from "./components/AuthModal";
@@ -163,6 +166,9 @@ export default function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms"          element={<Terms />} />
           <Route path="/become-a-guide" element={<BecomeAGuide />} />
+          <Route path="/community"       element={<CommunityPage user={user} onStart={() => setShowOnboarding(true)} />} />
+          <Route path="/community/ask"   element={<AskQuestion   user={user} />} />
+          <Route path="/community/:slug" element={<QuestionPage  user={user} onStart={() => setShowOnboarding(true)} />} />
 
           {/* Existing pages */}
           <Route path="/events" element={
