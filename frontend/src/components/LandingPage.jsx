@@ -76,9 +76,7 @@ export default function LandingPage({ onStart }) {
               letterSpacing: "-1px",
               margin: 0,
             }}>
-              Walk your grief.<br />
-              Feel whole again.<br />
-              <em style={{ fontStyle: "italic", color: "#c4623a", fontWeight: 300 }}>Rebuild.</em>
+              Walk your grief. Feel whole again. <em style={{ fontStyle: "italic", color: "#c4623a", fontWeight: 300 }}>Rebuild.</em>
             </h1>
           </div>
 
