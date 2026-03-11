@@ -176,17 +176,15 @@ const styles = `
 `;
 
 const STEPS = [
-  { n: "01", title: "Tell us what you need", text: "After you share your story, we understand where you are in your grief. Your stage determines who we show you." },
-  { n: "02", title: "Browse matched mentors", text: "You are shown a curated selection of mentors who walked in similar lanes at some point of life. They have gone through separation, divorce, loss of identity, co-parenting, or rebuilding after a relationship. You choose who feels right." },
-  { n: "03", title: "Book a private session", text: "One conversation. No commitment. Book a single session at a time. Sessions happen via secure video, audio, or chat — whatever feels safe for you. It could be anonymous too." },
-  { n: "04", title: "Keep going if it helps", text: "If the first session resonates, book another. Some people need one conversation. Some need ten. There is no prescription — only what works for you and your mentor." },
+  { n: "01", title: "Tell us your story", text: "Share what this transition has been like for you. Write what feels honest — that's enough." },
+  { n: "02", title: "Meet a mentor or peer guide", text: "Connect with someone who has walked through separation and rebuilt their life." },
+  { n: "03", title: "Start a conversation", text: "Book a private session and talk openly with someone who understands the journey you're navigating." },
 ];
 
 export default function MeetYourPeer() {
   const [form, setForm] = useState({
-    name: "", story: "", email: "", phone: "",
+    story: "", email: "",
     separation_type: "", separation_timeline: "",
-    children_involved: "", religion: "",
   });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -203,13 +201,11 @@ export default function MeetYourPeer() {
 
     const { error: err } = await supabase.from("seeker_profiles").insert({
       user_id: session?.user?.id ?? null,
+      email: form.email,
       what_hurts: form.story,
       separation_type: form.separation_type || null,
-      religion: form.religion || null,
-      children_involved: form.children_involved === "yes" ? true : form.children_involved === "no" ? false : null,
       separation_timeline: form.separation_timeline || null,
       matching_status: "pending",
-      created_at: new Date().toISOString(),
     });
 
     setLoading(false);
@@ -248,8 +244,8 @@ export default function MeetYourPeer() {
           {/* LEFT — dark walnut */}
           <div className="peer-left">
             <div className="pl-label">How It Works</div>
-            <h2>Tell us your story.<br />We'll find your person.</h2>
-            <p className="pl-sub">There's no right way to say it. Just write what's true.</p>
+            <h2>Tell us your story.<br />Meet someone who understands.</h2>
+            <p className="pl-sub">There's no perfect way to explain what you're going through. Just write what feels true.</p>
 
             <div className="peer-steps">
               {STEPS.map(s => (
@@ -277,77 +273,41 @@ export default function MeetYourPeer() {
             ) : (
               <form onSubmit={onSubmit}>
                 <div className="sf-group">
-                  <label>Full Name</label>
-                  <input
-                    name="name"
-                    type="text"
-                    value={form.name}
-                    onChange={onChange}
-                    placeholder="What should we call you?"
-                    required
-                  />
-                </div>
-
-                <div className="sf-group">
-                  <label>Share Your Story</label>
+                  <label>Tell us your story</label>
                   <textarea
                     name="story"
                     value={form.story}
                     onChange={onChange}
-                    placeholder="How long were you together? How long since the separation? What is the hardest thing right now?"
+                    placeholder="What has this transition been like for you? You can share as much or as little as you want."
                     required
                   />
-                  <div className="sf-hint">We read every story personally.</div>
                 </div>
 
                 <div className="sf-group">
-                  <label>Type of Separation</label>
+                  <label>Type of separation</label>
                   <select name="separation_type" value={form.separation_type} onChange={onChange}>
                     <option value="">Select one</option>
-                    <option value="married">Married</option>
-                    <option value="live_in">Live-in relationship</option>
-                    <option value="long_term">Long-term partner</option>
-                    <option value="situationship">Situationship / Unclear</option>
+                    <option value="relationship">Relationship</option>
+                    <option value="marriage">Marriage</option>
+                    <option value="live_in">Living together</option>
+                    <option value="long_term">Long-term partnership</option>
+                    <option value="prefer_not">Prefer not to say</option>
                   </select>
                 </div>
 
                 <div className="sf-group">
-                  <label>How Long Ago</label>
+                  <label>How long ago</label>
                   <select name="separation_timeline" value={form.separation_timeline} onChange={onChange}>
                     <option value="">Select one</option>
-                    <option value="under_3m">Less than 3 months</option>
-                    <option value="3_6m">3–6 months</option>
-                    <option value="6_12m">6–12 months</option>
-                    <option value="1_2y">1–2 years</option>
-                    <option value="over_2y">Over 2 years</option>
+                    <option value="very_recent">Very recent</option>
+                    <option value="few_months">A few months</option>
+                    <option value="about_a_year">About a year</option>
+                    <option value="several_years">Several years</option>
                   </select>
                 </div>
 
                 <div className="sf-group">
-                  <label>Children Involved</label>
-                  <select name="children_involved" value={form.children_involved} onChange={onChange}>
-                    <option value="">Select one</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-
-                <div className="sf-group">
-                  <label>Religion / Background <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>(optional)</span></label>
-                  <select name="religion" value={form.religion} onChange={onChange}>
-                    <option value="">Prefer not to say</option>
-                    <option value="hindu">Hindu</option>
-                    <option value="muslim">Muslim</option>
-                    <option value="christian">Christian</option>
-                    <option value="sikh">Sikh</option>
-                    <option value="jain">Jain</option>
-                    <option value="buddhist">Buddhist</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div className="sf-group">
-                  <label>Email Address</label>
+                  <label>Email address</label>
                   <input
                     name="email"
                     type="email"
@@ -358,23 +318,14 @@ export default function MeetYourPeer() {
                   />
                 </div>
 
-                <div className="sf-group">
-                  <label>Phone Number</label>
-                  <input
-                    name="phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={onChange}
-                    placeholder="+91 00000 00000"
-                  />
-                  <div className="sf-hint">Optional — we'll call you if you'd prefer to talk</div>
-                </div>
-
                 {error && <p className="peer-error">{error}</p>}
 
                 <button className="peer-btn" disabled={loading}>
-                  {loading ? "Sending…" : "Find My Mentor →"}
+                  {loading ? "Sending…" : "Share your story →"}
                 </button>
+                <div className="sf-hint" style={{ textAlign: "center", marginTop: 12 }}>
+                  We read every story personally.
+                </div>
               </form>
             )}
           </div>
