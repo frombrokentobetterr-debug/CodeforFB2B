@@ -77,7 +77,7 @@ export default function LandingPage({ onStart }) {
 
       <section style={{
         background: "#f4ede3",
-        padding: "140px 32px 120px",
+        padding: "120px 32px 120px",
       }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
