@@ -234,66 +234,159 @@ export default function LandingPage({ onStart }) {
       <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
 
       {/* GUIDE / PROFESSIONAL CTA */}
+      <style>{`
+        .role-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 32px;
+          margin-top: 56px;
+        }
+        @media (max-width: 700px) {
+          .role-grid { grid-template-columns: 1fr; }
+        }
+        .role-card-link {
+          display: inline-block;
+          margin-top: 28px;
+          background: none;
+          border: none;
+          color: #c4623a;
+          font-family: 'Jost', sans-serif;
+          font-size: 13px;
+          font-weight: 300;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .role-card-link:hover { color: #9e4828; }
+      `}</style>
       <section className="section" style={{ background: "#fdf9f5" }}>
-        <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
-          <div className="section-tag" style={{ display: "inline-block" }}>Give Back</div>
-          <h2 className="section-title">
-            Help someone find their<br />
-            <em style={{ fontStyle: "italic", color: "#c4623a" }}>next chapter.</em>
-          </h2>
-          <p className="section-sub" style={{ maxWidth: 560, margin: "0 auto 16px" }}>
-            Have you navigated separation and rebuilt your life?
-          </p>
-          <p className="section-sub" style={{ maxWidth: 560, margin: "0 auto 16px" }}>
-            Your experience could help someone who is just beginning that journey.
-          </p>
-          <p className="section-sub" style={{ maxWidth: 560, margin: "0 auto 48px" }}>
-            From Broken to Better invites people who have walked this path — as well as therapists and professionals — to support others through conversation, guidance, and community.
-          </p>
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link
-              to="/become-a-guide"
-              style={{
-                display: "inline-block",
-                background: "#c4623a",
-                color: "white",
-                borderRadius: 100,
-                padding: "14px 32px",
-                fontSize: 13,
-                fontWeight: 300,
-                letterSpacing: "0.1em",
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+
+          {/* Header */}
+          <div style={{ textAlign: "center", marginBottom: 8 }}>
+            <div className="section-tag" style={{ display: "inline-block" }}>Give Back</div>
+            <h2 className="section-title">
+              Help someone find their<br />
+              <em style={{ fontStyle: "italic", color: "#c4623a" }}>next chapter.</em>
+            </h2>
+            <p className="section-sub" style={{ maxWidth: 600, margin: "0 auto 10px" }}>
+              Have you navigated separation and rebuilt your life?
+            </p>
+            <p className="section-sub" style={{ maxWidth: 600, margin: "0 auto 10px" }}>
+              Sometimes the most powerful support comes from someone who has simply walked the path before.
+            </p>
+            <p className="section-sub" style={{ maxWidth: 600, margin: "0 auto 0" }}>
+              From Broken to Better invites people who have lived through separation, as well as trained professionals, to support others who are beginning this journey.
+            </p>
+          </div>
+
+          {/* Role cards */}
+          <div className="role-grid">
+
+            {/* Peer Guide */}
+            <div style={{
+              background: "white",
+              border: "1px solid rgba(196,98,58,0.12)",
+              borderRadius: 20,
+              padding: "40px 36px",
+              display: "flex",
+              flexDirection: "column",
+            }}>
+              <div style={{
+                fontSize: 10,
+                letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                textDecoration: "none",
-                fontFamily: "'Jost', sans-serif",
-                transition: "background 0.2s",
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = "#9e4828"}
-              onMouseLeave={e => e.currentTarget.style.background = "#c4623a"}
-            >
-              Become a Peer Guide
-            </Link>
-            <Link
-              to="/become-a-guide"
-              style={{
-                display: "inline-block",
-                background: "transparent",
                 color: "#c4623a",
-                borderRadius: 100,
-                padding: "14px 32px",
+                fontFamily: "'Jost', sans-serif",
+                fontWeight: 300,
+                marginBottom: 14,
+              }}>
+                Peer Guide
+              </div>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 22,
+                fontWeight: 400,
+                color: "#1c1410",
+                margin: "0 0 18px",
+                lineHeight: 1.3,
+              }}>
+                Someone who has walked this path
+              </h3>
+              <p style={{
+                fontFamily: "'Jost', sans-serif",
+                fontSize: 14,
+                fontWeight: 300,
+                color: "#8a7d74",
+                lineHeight: 1.75,
+                margin: "0 0 12px",
+                flex: 1,
+              }}>
+                People who have personally navigated separation and are willing to share perspective, encouragement, and conversation with others walking a similar path.
+              </p>
+              <p style={{
+                fontFamily: "'Jost', sans-serif",
                 fontSize: 13,
                 fontWeight: 300,
-                letterSpacing: "0.1em",
+                color: "#a09080",
+                lineHeight: 1.7,
+                margin: 0,
+                fontStyle: "italic",
+              }}>
+                Some guides volunteer their time, while others may offer paid sessions.
+              </p>
+              <Link to="/become-a-guide" className="role-card-link">
+                Become a Peer Guide →
+              </Link>
+            </div>
+
+            {/* Professional */}
+            <div style={{
+              background: "white",
+              border: "1px solid rgba(196,98,58,0.12)",
+              borderRadius: 20,
+              padding: "40px 36px",
+              display: "flex",
+              flexDirection: "column",
+            }}>
+              <div style={{
+                fontSize: 10,
+                letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                textDecoration: "none",
+                color: "#c4623a",
                 fontFamily: "'Jost', sans-serif",
-                border: "1px solid #c4623a",
-                transition: "background 0.2s, color 0.2s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#c4623a"; e.currentTarget.style.color = "white"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#c4623a"; }}
-            >
-              Apply as a Professional
-            </Link>
+                fontWeight: 300,
+                marginBottom: 14,
+              }}>
+                Professional
+              </div>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 22,
+                fontWeight: 400,
+                color: "#1c1410",
+                margin: "0 0 18px",
+                lineHeight: 1.3,
+              }}>
+                Trained to guide deeper healing
+              </h3>
+              <p style={{
+                fontFamily: "'Jost', sans-serif",
+                fontSize: 14,
+                fontWeight: 300,
+                color: "#8a7d74",
+                lineHeight: 1.75,
+                margin: 0,
+                flex: 1,
+              }}>
+                Therapists, counselors, and other trained professionals who offer structured guidance and support for those who want deeper help.
+              </p>
+              <Link to="/become-a-guide" className="role-card-link">
+                Apply as a Professional →
+              </Link>
+            </div>
+
           </div>
         </div>
       </section>
@@ -375,60 +468,6 @@ export default function LandingPage({ onStart }) {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* FIND YOUR PEER */}
-      <section style={{ background: "#1c1410", padding: "96px 48px", textAlign: "center" }}>
-        <div style={{ maxWidth: 680, margin: "0 auto" }}>
-          <div style={{
-            fontSize: 11,
-            letterSpacing: "0.3em",
-            textTransform: "uppercase",
-            color: "#c4623a",
-            marginBottom: 20,
-            fontFamily: "'DM Sans', sans-serif",
-          }}>
-            Meet Your Peer
-          </div>
-          <h2 style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "clamp(32px, 4vw, 52px)",
-            fontWeight: 300,
-            color: "#f4ede3",
-            lineHeight: 1.25,
-            marginBottom: 24,
-          }}>
-            You are not alone. Many walked the grief, many perished — meet somebody who survived.
-          </h2>
-          <p style={{
-            fontSize: 16,
-            color: "rgba(244,237,227,0.6)",
-            marginBottom: 44,
-            lineHeight: 1.75,
-            fontWeight: 300,
-          }}>
-            Not a therapist. Not advice. A real person who went through a separation just like yours.
-          </p>
-          <Link
-            to="/meet-your-peer"
-            style={{
-              display: "inline-block",
-              background: "#c4623a",
-              color: "white",
-              borderRadius: 100,
-              padding: "16px 40px",
-              fontSize: 15,
-              fontWeight: 500,
-              textDecoration: "none",
-              fontFamily: "'DM Sans', sans-serif",
-              transition: "background 0.2s",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "#9e4828"}
-            onMouseLeave={e => e.currentTarget.style.background = "#c4623a"}
-          >
-            Find My Peer →
-          </Link>
         </div>
       </section>
 
