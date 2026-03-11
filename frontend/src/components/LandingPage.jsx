@@ -69,7 +69,7 @@ export default function LandingPage({ onStart }) {
           <div style={{ textAlign: "center", marginBottom: 72 }}>
             <h1 style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(52px, 7.5vw, 104px)",
+              fontSize: "clamp(36px, 5vw, 72px)",
               fontWeight: 400,
               lineHeight: 1.05,
               color: "#2a1e18",
