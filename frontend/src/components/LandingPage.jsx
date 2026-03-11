@@ -233,6 +233,86 @@ export default function LandingPage({ onStart }) {
       {/* Divider */}
       <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
 
+      {/* HOW IT WORKS */}
+      <style>{`
+        .hiw-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 40px;
+        }
+        @media (max-width: 900px) {
+          .hiw-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 580px) {
+          .hiw-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
+      <section className="section">
+        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 64 }}>
+            <div className="section-tag" style={{ display: "inline-block" }}>How It Works</div>
+            <h2 className="section-title" style={{ maxWidth: 500, margin: "0 auto" }}>
+              A simple path toward rebuilding your next chapter.
+            </h2>
+          </div>
+          <div className="hiw-grid">
+            {[
+              {
+                n: "1",
+                title: "Reflect on where you are",
+                desc: "Start with a short reflection assignment to understand your current state.",
+              },
+              {
+                n: "2",
+                title: "Connect with someone who understands",
+                desc: "Meet peer mentors who have walked through separation and rebuilt their lives.",
+              },
+              {
+                n: "3",
+                title: "Begin rebuilding your next chapter",
+                desc: "Join the community, attend sessions, and access guidance that helps you move forward.",
+              },
+            ].map(({ n, title, desc }) => (
+              <div key={n} style={{ textAlign: "center", padding: "8px 16px" }}>
+                <div style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 80,
+                  fontWeight: 300,
+                  lineHeight: 1,
+                  color: "#c4623a",
+                  marginBottom: 20,
+                }}>
+                  {n}
+                </div>
+                <h3 style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 22,
+                  fontWeight: 400,
+                  color: "#1c1410",
+                  margin: "0 0 14px",
+                  lineHeight: 1.3,
+                }}>
+                  {title}
+                </h3>
+                <p style={{
+                  fontFamily: "'Jost', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 300,
+                  color: "#8a7d74",
+                  lineHeight: 1.75,
+                  margin: 0,
+                }}>
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
+
       {/* GUIDE / PROFESSIONAL CTA */}
       <style>{`
         .role-grid {
@@ -387,86 +467,6 @@ export default function LandingPage({ onStart }) {
               </Link>
             </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
-
-      {/* HOW IT WORKS */}
-      <style>{`
-        .hiw-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 40px;
-        }
-        @media (max-width: 900px) {
-          .hiw-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 580px) {
-          .hiw-grid { grid-template-columns: 1fr; }
-        }
-      `}</style>
-      <section className="section">
-        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 64 }}>
-            <div className="section-tag" style={{ display: "inline-block" }}>How It Works</div>
-            <h2 className="section-title" style={{ maxWidth: 500, margin: "0 auto" }}>
-              A simple path toward rebuilding your next chapter.
-            </h2>
-          </div>
-          <div className="hiw-grid">
-            {[
-              {
-                n: "1",
-                title: "Reflect on where you are",
-                desc: "Start with a short reflection assignment to understand your current state.",
-              },
-              {
-                n: "2",
-                title: "Connect with someone who understands",
-                desc: "Meet peer mentors who have walked through separation and rebuilt their lives.",
-              },
-              {
-                n: "3",
-                title: "Begin rebuilding your next chapter",
-                desc: "Join the community, attend sessions, and access guidance that helps you move forward.",
-              },
-            ].map(({ n, title, desc }) => (
-              <div key={n} style={{ textAlign: "center", padding: "8px 16px" }}>
-                <div style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 80,
-                  fontWeight: 300,
-                  lineHeight: 1,
-                  color: "#c4623a",
-                  marginBottom: 20,
-                }}>
-                  {n}
-                </div>
-                <h3 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 22,
-                  fontWeight: 400,
-                  color: "#1c1410",
-                  margin: "0 0 14px",
-                  lineHeight: 1.3,
-                }}>
-                  {title}
-                </h3>
-                <p style={{
-                  fontFamily: "'Jost', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 300,
-                  color: "#8a7d74",
-                  lineHeight: 1.75,
-                  margin: 0,
-                }}>
-                  {desc}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
