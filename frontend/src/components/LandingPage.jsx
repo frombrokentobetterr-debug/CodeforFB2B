@@ -33,16 +33,32 @@ export default function LandingPage({ onStart }) {
         .s1-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 28px;
+          gap: 48px;
+          max-width: 1200px;
+          margin: 0 auto;
         }
         @media (max-width: 960px) {
-          .s1-grid { grid-template-columns: repeat(2, 1fr); }
+          .s1-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
         }
         @media (max-width: 600px) {
-          .s1-grid { grid-template-columns: 1fr; }
+          .s1-grid { grid-template-columns: 1fr; gap: 24px; }
+        }
+        .s1-tile {
+          background: #fdf9f5;
+          border: 1px solid rgba(196,98,58,0.12);
+          border-radius: 20px;
+          padding: 40px;
+          display: flex;
+          flex-direction: column;
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .s1-tile:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 12px 40px rgba(42,28,16,0.12);
         }
         .s1-tile-btn {
           display: inline-block;
+          margin-top: auto;
           padding-top: 28px;
           background: none;
           border: none;
@@ -61,22 +77,23 @@ export default function LandingPage({ onStart }) {
 
       <section style={{
         background: "#f4ede3",
-        padding: "120px 32px 96px",
+        padding: "140px 32px 120px",
       }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
           {/* Headline */}
-          <div style={{ textAlign: "center", marginBottom: 72 }}>
+          <div style={{ textAlign: "center", marginBottom: 96 }}>
             <h1 style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(36px, 5vw, 72px)",
+              fontSize: "clamp(36px, 5vw, 68px)",
               fontWeight: 400,
-              lineHeight: 1.05,
+              lineHeight: 1.2,
               color: "#2a1e18",
-              letterSpacing: "-1px",
+              letterSpacing: "-0.5px",
               margin: 0,
             }}>
-              Walk your grief. Feel whole again. <em style={{ fontStyle: "italic", color: "#c4623a", fontWeight: 300 }}>Rebuild.</em>
+              Walk your grief. Feel whole again.<br />
+              <em style={{ fontStyle: "italic", color: "#c4623a", fontWeight: 300 }}>Rebuild.</em>
             </h1>
           </div>
 
@@ -84,14 +101,7 @@ export default function LandingPage({ onStart }) {
           <div className="s1-grid">
 
             {/* Tile 1 */}
-            <div style={{
-              background: "white",
-              borderRadius: 20,
-              padding: "40px 36px",
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "0 2px 24px rgba(42,28,16,0.06)",
-            }}>
+            <div className="s1-tile">
               <h3 style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: 22,
@@ -120,14 +130,7 @@ export default function LandingPage({ onStart }) {
             </div>
 
             {/* Tile 2 */}
-            <div style={{
-              background: "white",
-              borderRadius: 20,
-              padding: "40px 36px",
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "0 2px 24px rgba(42,28,16,0.06)",
-            }}>
+            <div className="s1-tile">
               <h3 style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: 22,
@@ -155,14 +158,7 @@ export default function LandingPage({ onStart }) {
             </div>
 
             {/* Tile 3 */}
-            <div style={{
-              background: "white",
-              borderRadius: 20,
-              padding: "40px 36px",
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "0 2px 24px rgba(42,28,16,0.06)",
-            }}>
+            <div className="s1-tile">
               <h3 style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: 22,
