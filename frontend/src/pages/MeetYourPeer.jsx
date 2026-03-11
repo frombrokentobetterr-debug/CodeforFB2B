@@ -48,7 +48,7 @@ const styles = `
 
   .peer-steps { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
   .peer-step {
-    padding: 20px 0;
+    padding: 28px 0;
     border-top: 1px solid rgba(255,255,255,0.08);
     display: flex;
     gap: 20px;
@@ -116,7 +116,7 @@ const styles = `
   .sf-group textarea::placeholder { color: #b8a898; }
   .sf-group input:focus,
   .sf-group textarea:focus { border-color: #c4623a; }
-  .sf-group textarea { resize: vertical; min-height: 140px; line-height: 1.7; }
+  .sf-group textarea { resize: vertical; height: 140px; line-height: 1.7; }
   .sf-group select {
     width: 100%;
     background: #ffffff;
@@ -151,7 +151,7 @@ const styles = `
     text-transform: uppercase;
     cursor: pointer;
     transition: background 0.2s;
-    margin-top: 8px;
+    margin-top: 32px;
   }
   .peer-btn:hover { background: #9e4828; }
   .peer-btn:disabled { background: #c4a898; cursor: not-allowed; }
@@ -271,7 +271,7 @@ export default function MeetYourPeer() {
                 <p>We will be in touch within 48 hours.</p>
               </div>
             ) : (
-              <form onSubmit={onSubmit}>
+              <form onSubmit={onSubmit} style={{ paddingTop: 24 }}>
                 <div className="sf-group">
                   <label>Tell us your story</label>
                   <textarea
