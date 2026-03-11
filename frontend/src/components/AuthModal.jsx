@@ -70,6 +70,40 @@ const leafStyles = `
     width: 100%;
   }
   .am-success-btn:hover { background: #9e4828; }
+
+  .am-forgot-link {
+    display: block;
+    text-align: right;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #a09080;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: -10px;
+    margin-bottom: 18px;
+    transition: color 0.2s;
+  }
+  .am-forgot-link:hover { color: #c4623a; }
+
+  .am-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #a09080;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+  }
+  .am-back-link:hover { color: #c4623a; }
 `;
 
 function LeafSVG() {
@@ -92,21 +126,27 @@ function LeafSVG() {
 export default function AuthModal({ mode, setMode, onLogin, onClose }) {
   const navigate = useNavigate();
 
+  const [view, setView]         = useState(mode); // "login" | "signup" | "forgot"
   const [name, setName]         = useState("");
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
   const [success, setSuccess]   = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
+  // Keep outer mode prop in sync when parent changes it
+  const switchView = next => { setView(next); setMode(next !== "forgot" ? next : mode); setError(""); };
+
+  // ── Login / Signup submit ──
   const handleSubmit = async () => {
     if (!email || !password) { setError("Please fill in all fields."); return; }
-    if (mode === "signup" && !name.trim()) { setError("Please enter your name."); return; }
-    if (mode === "signup" && password.length < 8) { setError("Password must be at least 8 characters."); return; }
+    if (view === "signup" && !name.trim()) { setError("Please enter your name."); return; }
+    if (view === "signup" && password.length < 8) { setError("Password must be at least 8 characters."); return; }
     setLoading(true);
     setError("");
 
-    if (mode === "login") {
+    if (view === "login") {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password });
       if (err) { setError(err.message); setLoading(false); return; }
       onLogin();
@@ -134,7 +174,6 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
           setLoading(false);
           return;
         }
-        // Supabase returns no error but empty identities when email confirmation is ON + duplicate email
         if (signUpData?.user?.identities?.length === 0) {
           setError("An account with this email already exists. Use the Sign in link below.");
           setLoading(false);
@@ -153,7 +192,29 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
     setLoading(false);
   };
 
-  // ── Success state ──
+  // ── Forgot password submit ──
+  const handleForgot = async () => {
+    if (!email.trim()) { setError("Please enter your email address."); return; }
+    setLoading(true);
+    setError("");
+    try {
+      const redirectTo = import.meta.env.VITE_APP_URL
+        ? `${import.meta.env.VITE_APP_URL}/reset-password`
+        : `${window.location.origin}/reset-password`;
+      const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo,
+      });
+      if (err) { setError(err.message); setLoading(false); return; }
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+    setResetSent(true);
+  };
+
+  // ── Signup success state ──
   if (success) {
     return (
       <div className="auth-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -181,7 +242,60 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
     );
   }
 
-  // ── Form ──
+  // ── Forgot password view ──
+  if (view === "forgot") {
+    return (
+      <div className="auth-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <style>{leafStyles}</style>
+        <div className="auth-card">
+          <button className="auth-close" onClick={onClose}>×</button>
+
+          {resetSent ? (
+            <div className="am-success">
+              <div style={{ fontSize: 36, marginBottom: 16 }}>📬</div>
+              <h2 className="am-success-headline">Check your inbox.</h2>
+              <p className="am-success-sub">
+                We sent a password reset link to <strong>{email}</strong>.
+              </p>
+              <p className="am-success-note">
+                If it doesn't show up in a minute, check your spam folder.
+              </p>
+              <button className="am-success-btn" onClick={onClose}>
+                Got it, close this
+              </button>
+            </div>
+          ) : (
+            <>
+              <button className="am-back-link" onClick={() => switchView("login")}>
+                ← Back to sign in
+              </button>
+              <h2 className="auth-title">Reset your password</h2>
+              <p className="auth-sub" style={{ marginBottom: 28 }}>
+                Enter the email you signed up with and we'll send a reset link.
+              </p>
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <input
+                  className="form-input"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && handleForgot()}
+                />
+              </div>
+              {error && <p className="error-msg">{error}</p>}
+              <button className="form-btn" onClick={handleForgot} disabled={loading}>
+                {loading ? "Sending…" : "Send Reset Link →"}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Login / Signup form ──
   return (
     <div className="auth-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <style>{leafStyles}</style>
@@ -190,12 +304,12 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
         <div style={{ textAlign: "center", marginBottom: 20 }}>
           <img src={openDoorIcon} alt="" style={{ height: 56, width: "auto" }} />
         </div>
-        <h2 className="auth-title">{mode === "login" ? "Welcome back" : "Begin healing"}</h2>
+        <h2 className="auth-title">{view === "login" ? "Welcome back" : "Begin healing"}</h2>
         <p className="auth-sub">
-          {mode === "login" ? "Sign in to continue your journey." : "Create your free account to get started."}
+          {view === "login" ? "Sign in to continue your journey." : "Create your free account to get started."}
         </p>
 
-        {mode === "signup" && (
+        {view === "signup" && (
           <div className="form-group">
             <label className="form-label">Full Name</label>
             <input
@@ -221,7 +335,7 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
         <div className="form-group">
           <label className="form-label">
             Password{" "}
-            {mode === "signup" && (
+            {view === "signup" && (
               <span style={{ fontSize: 11, color: "#a09080", fontWeight: 300 }}>
                 (min 8 characters)
               </span>
@@ -237,16 +351,22 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
           />
         </div>
 
+        {view === "login" && (
+          <button className="am-forgot-link" onClick={() => switchView("forgot")}>
+            Forgot your password?
+          </button>
+        )}
+
         {error && <p className="error-msg">{error}</p>}
 
         <button className="form-btn" onClick={handleSubmit} disabled={loading}>
-          {loading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
+          {loading ? "Please wait…" : view === "login" ? "Sign In" : "Create Account"}
         </button>
 
         <p className="auth-switch">
-          {mode === "login" ? "Don't have an account? " : "Already have an account? "}
-          <button onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}>
-            {mode === "login" ? "Sign up free" : "Sign in"}
+          {view === "login" ? "Don't have an account? " : "Already have an account? "}
+          <button onClick={() => switchView(view === "login" ? "signup" : "login")}>
+            {view === "login" ? "Sign up free" : "Sign in"}
           </button>
         </p>
       </div>

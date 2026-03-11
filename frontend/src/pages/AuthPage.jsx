@@ -119,6 +119,40 @@ const styles = `
 
   .auth-pg-back:hover { color: #c4623a; }
 
+  .auth-pg-forgot-link {
+    display: block;
+    text-align: right;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #a09080;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: -10px;
+    margin-bottom: 18px;
+    transition: color 0.2s;
+  }
+  .auth-pg-forgot-link:hover { color: #c4623a; }
+
+  .auth-pg-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #a09080;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+  }
+  .auth-pg-back-link:hover { color: #c4623a; }
+
   /* ── Leaf animation ── */
   @keyframes ap-leaf-draw {
     from { stroke-dashoffset: 260; }
@@ -140,7 +174,7 @@ const styles = `
     animation: ap-vein-draw 2.5s ease-in-out 0.4s forwards;
   }
 
-  /* ── Success state ── */
+  /* ── Success / sent states ── */
   .auth-pg-success {
     text-align: center;
     padding: 8px 0 4px;
@@ -210,7 +244,7 @@ function LeafSVG() {
 
 export default function AuthPage({ mode: initialMode, onLogin }) {
   const navigate = useNavigate();
-  const [mode, setMode] = useState(initialMode);
+  const [mode, setMode] = useState(initialMode); // "login" | "signup" | "forgot"
 
   // Signup fields
   const [fullName, setFullName]             = useState("");
@@ -221,17 +255,23 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
   const [loginEmail, setLoginEmail]         = useState("");
   const [loginPassword, setLoginPassword]   = useState("");
 
-  const [error, setError]     = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  // Forgot fields
+  const [forgotEmail, setForgotEmail]       = useState("");
+
+  const [error, setError]         = useState("");
+  const [loading, setLoading]     = useState(false);
+  const [success, setSuccess]     = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   const switchMode = next => {
     setMode(next);
     setError("");
     setFullName(""); setSignupEmail(""); setSignupPassword("");
     setLoginEmail(""); setLoginPassword("");
+    setForgotEmail("");
   };
 
+  // ── Login / Signup submit ──
   const handleSubmit = async () => {
     setError("");
 
@@ -251,7 +291,7 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
         const redirectTo = import.meta.env.VITE_APP_URL
           ? `${import.meta.env.VITE_APP_URL}/dashboard`
           : undefined;
-        const { error: err } = await supabase.auth.signUp({
+        const { data: signUpData, error: err } = await supabase.auth.signUp({
           email: signupEmail,
           password: signupPassword,
           options: {
@@ -260,7 +300,18 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
           },
         });
         if (err) {
-          setError("Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com");
+          const isDup = err.message?.toLowerCase().includes("already registered") ||
+                        err.message?.toLowerCase().includes("already exists") ||
+                        err.status === 422;
+          setError(isDup
+            ? "An account with this email already exists. Sign in instead."
+            : "Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com"
+          );
+          setLoading(false);
+          return;
+        }
+        if (signUpData?.user?.identities?.length === 0) {
+          setError("An account with this email already exists. Sign in instead.");
           setLoading(false);
           return;
         }
@@ -275,6 +326,28 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
     }
 
     setLoading(false);
+  };
+
+  // ── Forgot password submit ──
+  const handleForgot = async () => {
+    if (!forgotEmail.trim()) { setError("Please enter your email address."); return; }
+    setLoading(true);
+    setError("");
+    try {
+      const redirectTo = import.meta.env.VITE_APP_URL
+        ? `${import.meta.env.VITE_APP_URL}/reset-password`
+        : `${window.location.origin}/reset-password`;
+      const { error: err } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+        redirectTo,
+      });
+      if (err) { setError(err.message); setLoading(false); return; }
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+    setResetSent(true);
   };
 
   return (
@@ -296,7 +369,7 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
           {/* Card */}
           <div className="auth-pg-card">
 
-            {/* ── Success state ── */}
+            {/* ── Signup success ── */}
             {success ? (
               <div className="auth-pg-success">
                 <LeafSVG />
@@ -315,7 +388,61 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
                   Take me to my account →
                 </button>
               </div>
+
+            ) : mode === "forgot" ? (
+              /* ── Forgot password ── */
+              resetSent ? (
+                <div className="auth-pg-success">
+                  <div style={{ fontSize: 36, marginBottom: 16 }}>📬</div>
+                  <h1 className="auth-pg-success-headline">Check your inbox.</h1>
+                  <p className="auth-pg-success-sub">
+                    We sent a password reset link to <strong>{forgotEmail}</strong>.
+                  </p>
+                  <p className="auth-pg-success-note">
+                    If it doesn't show up in a minute, check your spam folder.
+                  </p>
+                  <button
+                    className="auth-pg-success-btn"
+                    onClick={() => switchMode("login")}
+                  >
+                    Back to sign in
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button className="auth-pg-back-link" onClick={() => switchMode("login")}>
+                    ← Back to sign in
+                  </button>
+                  <div className="auth-pg-eyebrow">Password reset</div>
+                  <h1 className="auth-pg-title">Reset your password</h1>
+                  <p className="auth-pg-sub">
+                    Enter the email you signed up with and we'll send a reset link.
+                  </p>
+                  <div className="form-group">
+                    <label className="form-label">Email Address</label>
+                    <input
+                      className="form-input"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={forgotEmail}
+                      onChange={e => setForgotEmail(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && handleForgot()}
+                    />
+                  </div>
+                  {error && <p className="error-msg">{error}</p>}
+                  <button
+                    className="form-btn"
+                    onClick={handleForgot}
+                    disabled={loading}
+                    style={{ marginTop: 8 }}
+                  >
+                    {loading ? "Sending…" : "Send Reset Link →"}
+                  </button>
+                </>
+              )
+
             ) : (
+              /* ── Login / Signup ── */
               <>
                 <div className="auth-pg-eyebrow">
                   {mode === "signup" ? "Join the community" : "Welcome back"}
@@ -329,7 +456,7 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
                     : "Continue your journey from where you left off."}
                 </p>
 
-                {/* ── Signup fields ── */}
+                {/* Signup fields */}
                 {mode === "signup" && (
                   <>
                     <div className="form-group">
@@ -343,7 +470,6 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
                         onChange={e => setFullName(e.target.value)}
                       />
                     </div>
-
                     <div className="form-group">
                       <label className="form-label">
                         Email Address <span style={{ color: "#c4623a" }}>*</span>
@@ -356,7 +482,6 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
                         onChange={e => setSignupEmail(e.target.value)}
                       />
                     </div>
-
                     <div className="form-group">
                       <label className="form-label">
                         Password <span style={{ color: "#c4623a" }}>*</span>{" "}
@@ -376,7 +501,7 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
                   </>
                 )}
 
-                {/* ── Login fields ── */}
+                {/* Login fields */}
                 {mode === "login" && (
                   <>
                     <div className="form-group">
@@ -400,6 +525,9 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
                         onKeyDown={e => e.key === "Enter" && handleSubmit()}
                       />
                     </div>
+                    <button className="auth-pg-forgot-link" onClick={() => switchMode("forgot")}>
+                      Forgot your password?
+                    </button>
                   </>
                 )}
 

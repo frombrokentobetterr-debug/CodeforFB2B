@@ -28,6 +28,7 @@ import Terms from "./pages/Terms";
 import AuthPage from "./pages/AuthPage";
 import AdminPage from "./pages/AdminPage";
 import BecomeAGuide from "./pages/BecomeAGuide";
+import ResetPassword from "./pages/ResetPassword";
 import CommunityPage from "./pages/community/CommunityPage";
 import QuestionPage from "./pages/community/QuestionPage";
 import AskQuestion from "./pages/community/AskQuestion";
@@ -185,9 +186,10 @@ export default function App() {
           } />
 
           {/* Auth routes */}
-          <Route path="/signin"   element={<AuthPage mode="login"  onLogin={handleLogin} onSignup={handleSignup} />} />
-          <Route path="/register" element={<AuthPage mode="signup" onLogin={handleLogin} onSignup={handleSignup} />} />
-          <Route path="/admin"    element={<AdminPage />} />
+          <Route path="/signin"         element={<AuthPage mode="login"  onLogin={handleLogin} onSignup={handleSignup} />} />
+          <Route path="/register"       element={<AuthPage mode="signup" onLogin={handleLogin} onSignup={handleSignup} />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/admin"          element={<AdminPage />} />
         </Routes>
       </main>
 
