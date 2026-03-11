@@ -89,7 +89,7 @@ function LeafSVG() {
   );
 }
 
-export default function AuthModal({ mode, setMode, onLogin, onSignup, onClose }) {
+export default function AuthModal({ mode, setMode, onLogin, onClose }) {
   const navigate = useNavigate();
 
   const [name, setName]         = useState("");
@@ -111,15 +111,24 @@ export default function AuthModal({ mode, setMode, onLogin, onSignup, onClose })
       if (err) { setError(err.message); setLoading(false); return; }
       onLogin();
     } else {
-      const { error: err } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: name },
-          emailRedirectTo: `${import.meta.env.VITE_APP_URL}/dashboard`,
-        },
-      });
-      if (err) {
+      try {
+        const redirectTo = import.meta.env.VITE_APP_URL
+          ? `${import.meta.env.VITE_APP_URL}/dashboard`
+          : undefined;
+        const { error: err } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: name },
+            ...(redirectTo && { emailRedirectTo: redirectTo }),
+          },
+        });
+        if (err) {
+          setError("Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com");
+          setLoading(false);
+          return;
+        }
+      } catch {
         setError("Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com");
         setLoading(false);
         return;

@@ -208,7 +208,7 @@ function LeafSVG() {
   );
 }
 
-export default function AuthPage({ mode: initialMode, onLogin, onSignup }) {
+export default function AuthPage({ mode: initialMode, onLogin }) {
   const navigate = useNavigate();
   const [mode, setMode] = useState(initialMode);
 
@@ -247,15 +247,24 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup }) {
       if (!/\S+@\S+\.\S+/.test(signupEmail)) { setError("Please enter a valid email address."); return; }
       if (signupPassword.length < 8)         { setError("Password must be at least 8 characters."); return; }
       setLoading(true);
-      const { error: err } = await supabase.auth.signUp({
-        email: signupEmail,
-        password: signupPassword,
-        options: {
-          data: { full_name: fullName },
-          emailRedirectTo: `${import.meta.env.VITE_APP_URL}/dashboard`,
-        },
-      });
-      if (err) {
+      try {
+        const redirectTo = import.meta.env.VITE_APP_URL
+          ? `${import.meta.env.VITE_APP_URL}/dashboard`
+          : undefined;
+        const { error: err } = await supabase.auth.signUp({
+          email: signupEmail,
+          password: signupPassword,
+          options: {
+            data: { full_name: fullName },
+            ...(redirectTo && { emailRedirectTo: redirectTo }),
+          },
+        });
+        if (err) {
+          setError("Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com");
+          setLoading(false);
+          return;
+        }
+      } catch {
         setError("Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com");
         setLoading(false);
         return;
