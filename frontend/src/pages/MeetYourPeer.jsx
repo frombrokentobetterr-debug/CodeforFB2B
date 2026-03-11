@@ -37,7 +37,7 @@ const styles = `
     font-weight: 300;
     line-height: 1.2;
     color: #f4ede3;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
   }
   .peer-left .pl-sub {
     font-size: 13px;
