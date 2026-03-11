@@ -115,13 +115,6 @@ export default function App() {
 
   const handleSignup = () => {
     setShowAuth(false);
-    if (pendingHealingData) {
-      setHealingData(pendingHealingData);
-      setPendingHealingData(null);
-      navigate("/dashboard");
-    } else {
-      setShowOnboarding(true);
-    }
   };
 
   const handleOnboardingComplete = (data) => {

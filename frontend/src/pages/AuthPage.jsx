@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import openDoorIcon from "../assets/icons/open-door.svg";
 import { supabase } from "../lib/supabase";
 
@@ -78,34 +78,6 @@ const styles = `
     line-height: 1.5;
   }
 
-  .auth-pg-field-note {
-    font-family: 'Jost', sans-serif;
-    font-size: 12px;
-    font-weight: 300;
-    color: #a09080;
-    line-height: 1.7;
-    margin-top: 8px;
-  }
-
-  .auth-pg-textarea {
-    width: 100%;
-    padding: 14px 18px;
-    border: 1.5px solid rgba(0,0,0,0.1);
-    border-radius: 12px;
-    font-size: 15px;
-    font-family: 'Jost', sans-serif;
-    font-weight: 300;
-    background: #faf7f2;
-    color: #2a1e18;
-    resize: vertical;
-    min-height: 110px;
-    outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.6;
-  }
-
-  .auth-pg-textarea:focus { border-color: #c4623a; }
-
   .auth-pg-divider {
     height: 1px;
     background: #ede3d8;
@@ -147,41 +119,116 @@ const styles = `
 
   .auth-pg-back:hover { color: #c4623a; }
 
-  .auth-pg-opt {
-    font-family: 'Jost', sans-serif;
-    font-size: 11px;
-    font-weight: 300;
-    color: #a09080;
-    margin-left: 6px;
-    letter-spacing: 0.05em;
+  /* ── Leaf animation ── */
+  @keyframes ap-leaf-draw {
+    from { stroke-dashoffset: 260; }
+    to   { stroke-dashoffset: 0; }
   }
+  @keyframes ap-vein-draw {
+    from { stroke-dashoffset: 70; }
+    to   { stroke-dashoffset: 0; }
+  }
+
+  .ap-leaf-path {
+    stroke-dasharray: 260;
+    stroke-dashoffset: 260;
+    animation: ap-leaf-draw 2.5s ease-in-out forwards;
+  }
+  .ap-leaf-vein {
+    stroke-dasharray: 70;
+    stroke-dashoffset: 70;
+    animation: ap-vein-draw 2.5s ease-in-out 0.4s forwards;
+  }
+
+  /* ── Success state ── */
+  .auth-pg-success {
+    text-align: center;
+    padding: 8px 0 4px;
+  }
+  .auth-pg-success-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #1c1410;
+    margin: 18px 0 12px;
+    line-height: 1.2;
+  }
+  .auth-pg-success-sub {
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: #8a7d74;
+    line-height: 1.6;
+    margin: 0 0 10px;
+  }
+  .auth-pg-success-note {
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: #8a7d74;
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0 0 26px;
+  }
+  .auth-pg-success-btn {
+    background: #c4623a;
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 14px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+  .auth-pg-success-btn:hover { background: #9e4828; }
 
   @media (max-width: 560px) {
     .auth-pg-card { padding: 40px 28px; }
   }
 `;
 
+function LeafSVG() {
+  return (
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        className="ap-leaf-path"
+        d="M40 10 C65 12, 70 38, 40 70 C10 38, 15 12, 40 10 Z"
+        stroke="#c4623a" strokeWidth="1.5" fill="none"
+      />
+      <path
+        className="ap-leaf-vein"
+        d="M40 10 L40 70"
+        stroke="#c4623a" strokeWidth="1" fill="none"
+      />
+    </svg>
+  );
+}
+
 export default function AuthPage({ mode: initialMode, onLogin, onSignup }) {
+  const navigate = useNavigate();
   const [mode, setMode] = useState(initialMode);
 
   // Signup fields
-  const [fullName, setFullName]         = useState("");
-  const [signupEmail, setSignupEmail]   = useState("");
+  const [fullName, setFullName]             = useState("");
+  const [signupEmail, setSignupEmail]       = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-  const [phone, setPhone]               = useState("");
-  const [story, setStory]               = useState("");
 
   // Login fields
-  const [loginEmail, setLoginEmail]       = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
+  const [loginEmail, setLoginEmail]         = useState("");
+  const [loginPassword, setLoginPassword]   = useState("");
 
   const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const switchMode = (next) => {
+  const switchMode = next => {
     setMode(next);
     setError("");
-    setFullName(""); setSignupEmail(""); setSignupPassword(""); setPhone(""); setStory("");
+    setFullName(""); setSignupEmail(""); setSignupPassword("");
     setLoginEmail(""); setLoginPassword("");
   };
 
@@ -195,18 +242,27 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup }) {
       if (err) { setError(err.message); setLoading(false); return; }
       onLogin();
     } else {
-      if (!fullName.trim()) { setError("Please enter your full name."); return; }
-      if (!signupEmail.trim()) { setError("Please enter your email address."); return; }
+      if (!fullName.trim())                  { setError("Please enter your full name."); return; }
+      if (!signupEmail.trim())               { setError("Please enter your email address."); return; }
       if (!/\S+@\S+\.\S+/.test(signupEmail)) { setError("Please enter a valid email address."); return; }
-      if (!signupPassword || signupPassword.length < 6) { setError("Password must be at least 6 characters."); return; }
+      if (signupPassword.length < 8)         { setError("Password must be at least 8 characters."); return; }
       setLoading(true);
       const { error: err } = await supabase.auth.signUp({
         email: signupEmail,
         password: signupPassword,
-        options: { data: { full_name: fullName, phone } },
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: `${import.meta.env.VITE_APP_URL}/dashboard`,
+        },
       });
-      if (err) { setError(err.message); setLoading(false); return; }
-      onSignup();
+      if (err) {
+        setError("Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com");
+        setLoading(false);
+        return;
+      }
+      setLoading(false);
+      setSuccess(true);
+      return;
     }
 
     setLoading(false);
@@ -230,141 +286,143 @@ export default function AuthPage({ mode: initialMode, onLogin, onSignup }) {
 
           {/* Card */}
           <div className="auth-pg-card">
-            <div className="auth-pg-eyebrow">
-              {mode === "signup" ? "Join the community" : "Welcome back"}
-            </div>
-            <h1 className="auth-pg-title">
-              {mode === "signup" ? "Begin healing" : "Sign in"}
-            </h1>
-            <p className="auth-pg-sub">
-              {mode === "signup"
-                ? "Tell us a little about yourself to get started."
-                : "Continue your journey from where you left off."}
-            </p>
 
-            {/* ── SIGNUP FIELDS ── */}
-            {mode === "signup" && (
+            {/* ── Success state ── */}
+            {success ? (
+              <div className="auth-pg-success">
+                <LeafSVG />
+                <h1 className="auth-pg-success-headline">You actually did it.</h1>
+                <p className="auth-pg-success-sub">
+                  That took guts. Check your inbox, we sent you something at{" "}
+                  <strong>{signupEmail}</strong>.
+                </p>
+                <p className="auth-pg-success-note">
+                  No pressure on what comes next. We are here when you're ready.
+                </p>
+                <button
+                  className="auth-pg-success-btn"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Take me to my account →
+                </button>
+              </div>
+            ) : (
               <>
-                <div className="form-group">
-                  <label className="form-label">
-                    Full Name <span style={{ color: "#c4623a" }}>*</span>
-                  </label>
-                  <input
-                    className="form-input"
-                    placeholder="Your full name"
-                    value={fullName}
-                    onChange={e => setFullName(e.target.value)}
-                  />
+                <div className="auth-pg-eyebrow">
+                  {mode === "signup" ? "Join the community" : "Welcome back"}
                 </div>
+                <h1 className="auth-pg-title">
+                  {mode === "signup" ? "Begin healing" : "Sign in"}
+                </h1>
+                <p className="auth-pg-sub">
+                  {mode === "signup"
+                    ? "Create your free account to get started."
+                    : "Continue your journey from where you left off."}
+                </p>
 
-                <div className="form-group">
-                  <label className="form-label">
-                    Email Address <span style={{ color: "#c4623a" }}>*</span>
-                  </label>
-                  <input
-                    className="form-input"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={signupEmail}
-                    onChange={e => setSignupEmail(e.target.value)}
-                  />
-                </div>
+                {/* ── Signup fields ── */}
+                {mode === "signup" && (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">
+                        Full Name <span style={{ color: "#c4623a" }}>*</span>
+                      </label>
+                      <input
+                        className="form-input"
+                        placeholder="Your full name"
+                        value={fullName}
+                        onChange={e => setFullName(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-group">
-                  <label className="form-label">
-                    Password <span style={{ color: "#c4623a" }}>*</span>
-                  </label>
-                  <input
-                    className="form-input"
-                    type="password"
-                    placeholder="At least 6 characters"
-                    value={signupPassword}
-                    onChange={e => setSignupPassword(e.target.value)}
-                  />
-                </div>
+                    <div className="form-group">
+                      <label className="form-label">
+                        Email Address <span style={{ color: "#c4623a" }}>*</span>
+                      </label>
+                      <input
+                        className="form-input"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={signupEmail}
+                        onChange={e => setSignupEmail(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-group">
-                  <label className="form-label">
-                    Phone Number <span className="auth-pg-opt">(optional)</span>
-                  </label>
-                  <input
-                    className="form-input"
-                    type="tel"
-                    placeholder="+91 98765 43210"
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                  />
-                </div>
+                    <div className="form-group">
+                      <label className="form-label">
+                        Password <span style={{ color: "#c4623a" }}>*</span>{" "}
+                        <span style={{ fontSize: 11, color: "#a09080", fontWeight: 300 }}>
+                          (min 8 characters)
+                        </span>
+                      </label>
+                      <input
+                        className="form-input"
+                        type="password"
+                        placeholder="At least 8 characters"
+                        value={signupPassword}
+                        onChange={e => setSignupPassword(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && handleSubmit()}
+                      />
+                    </div>
+                  </>
+                )}
 
-                <div className="form-group">
-                  <label className="form-label">What is hurting you right now?</label>
-                  <textarea
-                    className="auth-pg-textarea"
-                    placeholder="There is no right way to say it. Just write what you are feeling, or leave blank if you feel so.."
-                    value={story}
-                    onChange={e => setStory(e.target.value)}
-                    rows={4}
-                  />
-                  <p className="auth-pg-field-note">
-                    We ask because healing is not one-size-fits-all. The more you share, the better we can match you with the right peer, the right practitioner, and the right path. Your story stays private — always.
-                  </p>
-                </div>
+                {/* ── Login fields ── */}
+                {mode === "login" && (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">Email Address</label>
+                      <input
+                        className="form-input"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={loginEmail}
+                        onChange={e => setLoginEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Password</label>
+                      <input
+                        className="form-input"
+                        type="password"
+                        placeholder="••••••••"
+                        value={loginPassword}
+                        onChange={e => setLoginPassword(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && handleSubmit()}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {error && <p className="error-msg">{error}</p>}
+
+                <button
+                  className="form-btn"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  style={{ marginTop: 8 }}
+                >
+                  {loading
+                    ? "Please wait…"
+                    : mode === "signup"
+                      ? "Create Account"
+                      : "Sign In →"}
+                </button>
+
+                <div className="auth-pg-divider" />
+
+                <p className="auth-pg-footer-text">
+                  {mode === "signup" ? "Already have an account? " : "New here? "}
+                  <button
+                    className="auth-pg-switch"
+                    onClick={() => switchMode(mode === "signup" ? "login" : "signup")}
+                  >
+                    {mode === "signup" ? "Sign in" : "Create a free account"}
+                  </button>
+                </p>
               </>
             )}
 
-            {/* ── LOGIN FIELDS ── */}
-            {mode === "login" && (
-              <>
-                <div className="form-group">
-                  <label className="form-label">Email Address</label>
-                  <input
-                    className="form-input"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={loginEmail}
-                    onChange={e => setLoginEmail(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Password</label>
-                  <input
-                    className="form-input"
-                    type="password"
-                    placeholder="••••••••"
-                    value={loginPassword}
-                    onChange={e => setLoginPassword(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && handleSubmit()}
-                  />
-                </div>
-              </>
-            )}
-
-            {error && <p className="error-msg">{error}</p>}
-
-            <button
-              className="form-btn"
-              onClick={handleSubmit}
-              disabled={loading}
-              style={{ marginTop: 8 }}
-            >
-              {loading
-                ? "Please wait…"
-                : mode === "signup"
-                  ? "Begin My Journey →"
-                  : "Sign In →"}
-            </button>
-
-            <div className="auth-pg-divider" />
-
-            <p className="auth-pg-footer-text">
-              {mode === "signup" ? "Already have an account? " : "New here? "}
-              <button
-                className="auth-pg-switch"
-                onClick={() => switchMode(mode === "signup" ? "login" : "signup")}
-              >
-                {mode === "signup" ? "Sign in" : "Create a free account"}
-              </button>
-            </p>
           </div>
 
           <Link to="/" className="auth-pg-back">← Back to home</Link>
