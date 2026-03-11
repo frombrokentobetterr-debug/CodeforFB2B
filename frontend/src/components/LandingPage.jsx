@@ -233,6 +233,74 @@ export default function LandingPage({ onStart }) {
       {/* Divider */}
       <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
 
+      {/* GUIDE / PROFESSIONAL CTA */}
+      <section className="section" style={{ background: "#fdf9f5" }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+          <div className="section-tag" style={{ display: "inline-block" }}>Give Back</div>
+          <h2 className="section-title">
+            Help someone find their<br />
+            <em style={{ fontStyle: "italic", color: "#c4623a" }}>next chapter.</em>
+          </h2>
+          <p className="section-sub" style={{ maxWidth: 560, margin: "0 auto 16px" }}>
+            Have you navigated separation and rebuilt your life?
+          </p>
+          <p className="section-sub" style={{ maxWidth: 560, margin: "0 auto 16px" }}>
+            Your experience could help someone who is just beginning that journey.
+          </p>
+          <p className="section-sub" style={{ maxWidth: 560, margin: "0 auto 48px" }}>
+            From Broken to Better invites people who have walked this path — as well as therapists and professionals — to support others through conversation, guidance, and community.
+          </p>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link
+              to="/become-a-guide"
+              style={{
+                display: "inline-block",
+                background: "#c4623a",
+                color: "white",
+                borderRadius: 100,
+                padding: "14px 32px",
+                fontSize: 13,
+                fontWeight: 300,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                fontFamily: "'Jost', sans-serif",
+                transition: "background 0.2s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = "#9e4828"}
+              onMouseLeave={e => e.currentTarget.style.background = "#c4623a"}
+            >
+              Become a Peer Guide
+            </Link>
+            <Link
+              to="/become-a-guide"
+              style={{
+                display: "inline-block",
+                background: "transparent",
+                color: "#c4623a",
+                borderRadius: 100,
+                padding: "14px 32px",
+                fontSize: 13,
+                fontWeight: 300,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                fontFamily: "'Jost', sans-serif",
+                border: "1px solid #c4623a",
+                transition: "background 0.2s, color 0.2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#c4623a"; e.currentTarget.style.color = "white"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#c4623a"; }}
+            >
+              Apply as a Professional
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
+
       {/* HOW IT WORKS */}
       <style>{`
         .hiw-grid {
