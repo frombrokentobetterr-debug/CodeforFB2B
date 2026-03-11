@@ -445,14 +445,14 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
               /* ── Login / Signup ── */
               <>
                 <div className="auth-pg-eyebrow">
-                  {mode === "signup" ? "Join the community" : "Welcome back"}
+                  {mode === "signup" ? "From Broken to Better" : "Welcome back"}
                 </div>
                 <h1 className="auth-pg-title">
-                  {mode === "signup" ? "Begin healing" : "Sign in"}
+                  {mode === "signup" ? "A new chapter begins here" : "Sign in"}
                 </h1>
                 <p className="auth-pg-sub">
                   {mode === "signup"
-                    ? "Create your free account to get started."
+                    ? "Create your account to begin moving forward."
                     : "Continue your journey from where you left off."}
                 </p>
 
@@ -542,7 +542,7 @@ export default function AuthPage({ mode: initialMode, onLogin }) {
                   {loading
                     ? "Please wait…"
                     : mode === "signup"
-                      ? "Create Account"
+                      ? "Create my account"
                       : "Sign In →"}
                 </button>
 
