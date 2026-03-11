@@ -28,59 +28,170 @@ export default function LandingPage({ onStart }) {
         <meta name="twitter:description" content="A healing platform for people navigating separation and divorce in India. Find a peer who has walked your path." />
         <meta name="twitter:image" content="https://frombrokentobetter.com/og-image.jpg" />
       </Helmet>
-      {/* HERO */}
+      {/* SECTION 1 — Headline + Tiles */}
+      <style>{`
+        .s1-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 28px;
+        }
+        @media (max-width: 960px) {
+          .s1-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+          .s1-grid { grid-template-columns: 1fr; }
+        }
+        .s1-tile-btn {
+          display: inline-block;
+          padding-top: 28px;
+          background: none;
+          border: none;
+          color: #c4623a;
+          font-family: 'Jost', sans-serif;
+          font-size: 13px;
+          font-weight: 300;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          text-decoration: none;
+          transition: color 0.2s;
+          text-align: left;
+        }
+        .s1-tile-btn:hover { color: #9e4828; }
+      `}</style>
+
       <section style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        padding: "120px 80px 80px",
         background: "#f4ede3",
+        padding: "120px 32px 96px",
       }}>
-        <div style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-        }}>
-          <div style={{
-            fontSize: 11,
-            letterSpacing: "0.3em",
-            textTransform: "uppercase",
-            color: "#c4623a",
-            marginBottom: 24,
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 400,
-          }}>
-            Take the first step today
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+
+          {/* Headline */}
+          <div style={{ textAlign: "center", marginBottom: 72 }}>
+            <h1 style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "clamp(52px, 7.5vw, 104px)",
+              fontWeight: 400,
+              lineHeight: 1.05,
+              color: "#2a1e18",
+              letterSpacing: "-1px",
+              margin: 0,
+            }}>
+              Walk your grief.<br />
+              Feel whole again.<br />
+              <em style={{ fontStyle: "italic", color: "#c4623a", fontWeight: 300 }}>Rebuild.</em>
+            </h1>
           </div>
-          <h1 style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "clamp(52px, 7.5vw, 104px)",
-            fontWeight: 400,
-            lineHeight: 1.05,
-            color: "#2a1e18",
-            marginBottom: 36,
-            letterSpacing: "-1px",
-          }}>
-            Walk your grief.<br />
-            Feel whole again.<br />
-            <em style={{ fontStyle: "italic", color: "#c4623a", fontWeight: 300 }}>Rebuild.</em>
-          </h1>
-          <p style={{
-            fontSize: 18,
-            lineHeight: 1.75,
-            color: "#5a4a3a",
-            marginBottom: 52,
-            fontWeight: 300,
-            maxWidth: 560,
-            margin: "0 auto 52px",
-          }}>
-            Broken relationships hurt the same as death. But they cannot be told. This is your place to heal and grieve — out loud, without judgement.
-          </p>
-          <button className="btn-primary" onClick={onStart}>
-            Begin Your Journey →
-          </button>
+
+          {/* Tiles */}
+          <div className="s1-grid">
+
+            {/* Tile 1 */}
+            <div style={{
+              background: "white",
+              borderRadius: 20,
+              padding: "40px 36px",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0 2px 24px rgba(42,28,16,0.06)",
+            }}>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 22,
+                fontWeight: 400,
+                color: "#1c1410",
+                margin: "0 0 16px",
+                lineHeight: 1.3,
+              }}>
+                Understand Where You Are
+              </h3>
+              <p style={{
+                fontFamily: "'Jost', sans-serif",
+                fontSize: 14,
+                fontWeight: 300,
+                color: "#8a7d74",
+                lineHeight: 1.75,
+                margin: 0,
+                flex: 1,
+              }}>
+                Pause for a moment.<br />
+                Reflect on where you are right now.
+              </p>
+              <button className="s1-tile-btn" onClick={onStart}>
+                Reflect on Your Journey →
+              </button>
+            </div>
+
+            {/* Tile 2 */}
+            <div style={{
+              background: "white",
+              borderRadius: 20,
+              padding: "40px 36px",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0 2px 24px rgba(42,28,16,0.06)",
+            }}>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 22,
+                fontWeight: 400,
+                color: "#1c1410",
+                margin: "0 0 16px",
+                lineHeight: 1.3,
+              }}>
+                Learn From People Who Have Walked This Path
+              </h3>
+              <p style={{
+                fontFamily: "'Jost', sans-serif",
+                fontSize: 14,
+                fontWeight: 300,
+                color: "#8a7d74",
+                lineHeight: 1.75,
+                margin: 0,
+                flex: 1,
+              }}>
+                You don't have to figure this out alone.
+              </p>
+              <Link to="/meet-your-peer" className="s1-tile-btn">
+                Meet Your Peers →
+              </Link>
+            </div>
+
+            {/* Tile 3 */}
+            <div style={{
+              background: "white",
+              borderRadius: 20,
+              padding: "40px 36px",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0 2px 24px rgba(42,28,16,0.06)",
+            }}>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 22,
+                fontWeight: 400,
+                color: "#1c1410",
+                margin: "0 0 16px",
+                lineHeight: 1.3,
+              }}>
+                Read Real Stories of Rebuilding
+              </h3>
+              <p style={{
+                fontFamily: "'Jost', sans-serif",
+                fontSize: 14,
+                fontWeight: 300,
+                color: "#8a7d74",
+                lineHeight: 1.75,
+                margin: 0,
+                flex: 1,
+              }}>
+                Real journeys. Real beginnings again.
+              </p>
+              <Link to="/journal" className="s1-tile-btn">
+                Explore the Journal →
+              </Link>
+            </div>
+
+          </div>
         </div>
       </section>
 
