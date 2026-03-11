@@ -234,40 +234,76 @@ export default function LandingPage({ onStart }) {
       <div style={{ height: 1, background: "rgba(42,28,16,0.08)", margin: "0 48px" }} />
 
       {/* HOW IT WORKS */}
+      <style>{`
+        .hiw-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 40px;
+        }
+        @media (max-width: 900px) {
+          .hiw-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 580px) {
+          .hiw-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
       <section className="section">
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 60 }}>
+          <div style={{ textAlign: "center", marginBottom: 64 }}>
             <div className="section-tag" style={{ display: "inline-block" }}>How It Works</div>
             <h2 className="section-title" style={{ maxWidth: 500, margin: "0 auto" }}>
               A thoughtful approach to your healing
             </h2>
           </div>
-          <div className="features-grid">
-            {FEATURES.map((f, i) => (
-              <div key={i} className="feature-card">
-                <div className="feature-icon">{f.icon}</div>
-                <div className="feature-title">{f.title}</div>
-                <div className="feature-desc">{f.desc}</div>
-                <button
-                  onClick={() => setActiveFeature(f)}
-                  style={{
-                    marginTop: 20,
-                    background: "#c4623a",
-                    color: "white",
-                    border: "none",
-                    borderRadius: 100,
-                    padding: "10px 22px",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    fontFamily: "'DM Sans', sans-serif",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#9e4828"}
-                  onMouseLeave={e => e.currentTarget.style.background = "#c4623a"}
-                >
-                  Learn How
-                </button>
+          <div className="hiw-grid">
+            {[
+              {
+                n: "1",
+                title: "Reflect on where you are",
+                desc: "Start with a short reflection assignment to understand your current state.",
+              },
+              {
+                n: "2",
+                title: "Connect with someone who understands",
+                desc: "Meet peer mentors who have walked through separation and rebuilt their lives.",
+              },
+              {
+                n: "3",
+                title: "Begin rebuilding your next chapter",
+                desc: "Join the community, attend sessions, and access guidance that helps you move forward.",
+              },
+            ].map(({ n, title, desc }) => (
+              <div key={n} style={{ textAlign: "center", padding: "8px 16px" }}>
+                <div style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 80,
+                  fontWeight: 300,
+                  lineHeight: 1,
+                  color: "rgba(196,98,58,0.15)",
+                  marginBottom: 20,
+                }}>
+                  {n}
+                </div>
+                <h3 style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 22,
+                  fontWeight: 400,
+                  color: "#1c1410",
+                  margin: "0 0 14px",
+                  lineHeight: 1.3,
+                }}>
+                  {title}
+                </h3>
+                <p style={{
+                  fontFamily: "'Jost', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 300,
+                  color: "#8a7d74",
+                  lineHeight: 1.75,
+                  margin: 0,
+                }}>
+                  {desc}
+                </p>
               </div>
             ))}
           </div>
