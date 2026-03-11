@@ -208,10 +208,10 @@ export default function LandingPage({ onStart }) {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               {[
-                "Judgment-free space to process and grieve",
-                "AI-personalized healing paths based on your needs",
-                "Evidence-based workshops and expert-led sessions",
-                "A warm, supportive community of people who understand",
+                "Reflect on where you are",
+                "Learn from people who have walked this path",
+                "Read real stories of rebuilding",
+                "Find a community that understands",
               ].map((t, i) => (
                 <div key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
                   <div style={{
