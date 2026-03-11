@@ -279,7 +279,7 @@ export default function LandingPage({ onStart }) {
                   fontSize: 80,
                   fontWeight: 300,
                   lineHeight: 1,
-                  color: "rgba(196,98,58,0.15)",
+                  color: "#c4623a",
                   marginBottom: 20,
                 }}>
                   {n}
