@@ -115,7 +115,7 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
         const redirectTo = import.meta.env.VITE_APP_URL
           ? `${import.meta.env.VITE_APP_URL}/dashboard`
           : undefined;
-        const { error: err } = await supabase.auth.signUp({
+        const { data: signUpData, error: err } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -124,7 +124,19 @@ export default function AuthModal({ mode, setMode, onLogin, onClose }) {
           },
         });
         if (err) {
-          setError("Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com");
+          const isDup = err.message?.toLowerCase().includes("already registered") ||
+                        err.message?.toLowerCase().includes("already exists") ||
+                        err.status === 422;
+          setError(isDup
+            ? "An account with this email already exists. Use the Sign in link below."
+            : "Something went wrong. Try again or reach out to us at admin@frombrokentobetter.com"
+          );
+          setLoading(false);
+          return;
+        }
+        // Supabase returns no error but empty identities when email confirmation is ON + duplicate email
+        if (signUpData?.user?.identities?.length === 0) {
+          setError("An account with this email already exists. Use the Sign in link below.");
           setLoading(false);
           return;
         }
