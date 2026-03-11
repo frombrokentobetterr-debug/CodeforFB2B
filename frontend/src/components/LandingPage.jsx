@@ -320,7 +320,7 @@ export default function LandingPage({ onStart }) {
           <div style={{ textAlign: "center", marginBottom: 64 }}>
             <div className="section-tag" style={{ display: "inline-block" }}>How It Works</div>
             <h2 className="section-title" style={{ maxWidth: 500, margin: "0 auto" }}>
-              A thoughtful approach to your healing
+              A simple path toward rebuilding your next chapter.
             </h2>
           </div>
           <div className="hiw-grid">
