@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "../lib/supabase";
@@ -87,18 +87,25 @@ const styles = `
     justify-content: flex-start;
   }
 
+  /* Section headers inside form */
   .gf-section-head {
     font-size: 9px;
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: #a05a3a;
-    margin: 32px 0 18px;
+    margin: 28px 0 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid #e0d4c4;
   }
   .gf-section-head:first-child { margin-top: 0; }
 
-  .gf-group { margin-bottom: 20px; }
+  .gf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .gf-group { margin-bottom: 16px; }
   .gf-group > label {
     display: block;
     font-size: 9px;
@@ -108,7 +115,7 @@ const styles = `
     margin-bottom: 6px;
   }
   .gf-group input[type="text"],
-  .gf-group input[type="url"],
+  .gf-group input[type="email"],
   .gf-group input[type="number"],
   .gf-group textarea,
   .gf-group select {
@@ -127,18 +134,18 @@ const styles = `
     appearance: none;
   }
   .gf-group input[type="text"]:focus,
-  .gf-group input[type="url"]:focus,
+  .gf-group input[type="email"]:focus,
   .gf-group input[type="number"]:focus,
   .gf-group textarea:focus,
   .gf-group select:focus { border-color: #c4623a; }
-  .gf-group textarea { resize: vertical; min-height: 140px; line-height: 1.7; }
+  .gf-group input:disabled { background: #f8f3ee; color: #a09080; cursor: not-allowed; }
+  .gf-group textarea { resize: vertical; min-height: 130px; line-height: 1.7; }
   .gf-group input::placeholder,
   .gf-group textarea::placeholder { color: #b8a898; }
   .gf-hint { font-size: 10px; color: #a09488; margin-top: 5px; }
 
   /* Checkboxes */
   .gf-checks { display: flex; gap: 12px; flex-wrap: wrap; }
-  .gf-checks-col { display: flex; flex-direction: column; gap: 10px; }
   .gf-check {
     display: flex;
     align-items: center;
@@ -242,51 +249,68 @@ const styles = `
     .guide-split { flex-direction: column; }
     .guide-left  { flex: none; padding: 48px 28px; }
     .guide-right { flex: none; padding: 48px 28px; }
+    .gf-row      { grid-template-columns: 1fr; }
   }
 `;
 
-const TRAITS = [
-  { n: "01", title: "Bring your professional expertise", text: "Your training and credentials provide exactly what people navigating separation need. Join a platform built to connect you with those who seek structured, professional guidance." },
-  { n: "02", title: "Set your own terms", text: "Choose your session rate, availability, and the types of clients you work with. Full flexibility to complement your existing practice." },
-  { n: "03", title: "A curated, safe community", text: "All seekers come through our matching process. You'll only receive connections that align with your stated areas of support." },
-  { n: "04", title: "Professional, not peer", text: "We distinguish clearly between peer guides and trained professionals. Your credentials are front and centre on your profile." },
-];
-
-const LANGUAGES = [
-  "Hindi", "English", "Tamil",
-  "Bengali", "Marathi", "Punjabi", "Telugu", "Other"
-];
-
-const AREAS = [
-  "Divorce or separation transition",
-  "Relationship change",
-  "Identity rebuilding after separation",
-  "Co-parenting support",
-  "Life transition guidance",
+const STEPS = [
+  {
+    n: "01",
+    title: "Share your professional background",
+    text: "Tell us about your credentials and areas of support.",
+  },
+  {
+    n: "02",
+    title: "Create your professional profile",
+    text: "Add languages, session formats, and your availability.",
+  },
+  {
+    n: "03",
+    title: "Begin supporting seekers",
+    text: "Offer structured guidance to people navigating separation and life transitions.",
+  },
 ];
 
 const SESSION_FORMATS = ["Video", "Audio", "Chat"];
+
+const LANGUAGES = [
+  "Hindi", "English", "Tamil",
+  "Bengali", "Marathi", "Punjabi", "Telugu", "Other",
+];
 
 export default function BecomeAProfessional() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     full_name: "",
-    professional_title: "",
-    years_of_experience: "",
-    license: "",
-    website: "",
-    areas_of_support: [],
+    email: "",
+    specialisation: "",
+    credentials: "",
+    years_experience: "",
+    professional_bio: "",
+    session_formats: [],
     languages_spoken: [],
-    session_format: [],
     session_rate_inr: "",
+    city_state: "",
     is_available: true,
-    bio: "",
     photo: null,
   });
   const [sent, setSent]       = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
+
+  // Pre-fill email and name from auth session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setForm(prev => ({
+          ...prev,
+          email:     session.user.email ?? "",
+          full_name: session.user.user_metadata?.full_name ?? "",
+        }));
+      }
+    });
+  }, []);
 
   const onChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
@@ -310,35 +334,22 @@ export default function BecomeAProfessional() {
       return;
     }
 
-    if (!form.full_name.trim()) {
-      setError("Please enter your full name.");
-      setLoading(false);
-      return;
-    }
-
-    if (!form.professional_title.trim()) {
+    if (!form.specialisation.trim()) {
       setError("Please enter your professional title.");
       setLoading(false);
       return;
     }
-
-    if (form.languages_spoken.length === 0) {
-      setError("Please select at least one language you can support people in.");
-      setLoading(false);
-      return;
-    }
-
-    if (form.bio.trim().length < 50) {
-      setError("Please provide a brief professional bio.");
+    if (!form.professional_bio.trim()) {
+      setError("Please add a short professional bio.");
       setLoading(false);
       return;
     }
 
     // Upload photo if provided
-    let photo_url = null;
+    let profile_photo_url = null;
     if (form.photo) {
       const ext      = form.photo.name.split(".").pop();
-      const fileName = `prof-${session.user.id}-${Date.now()}.${ext}`;
+      const fileName = `practitioner-${session.user.id}-${Date.now()}.${ext}`;
       const { error: uploadErr } = await supabase.storage
         .from("guide-photos")
         .upload(fileName, form.photo, { upsert: false });
@@ -352,34 +363,29 @@ export default function BecomeAProfessional() {
       const { data: urlData } = supabase.storage
         .from("guide-photos")
         .getPublicUrl(fileName);
-      photo_url = urlData.publicUrl;
+      profile_photo_url = urlData.publicUrl;
     }
 
-    // Build structured bio with professional details
-    const structuredBio = [
-      `Title: ${form.professional_title}`,
-      form.years_of_experience ? `Experience: ${form.years_of_experience}` : null,
-      form.license            ? `License / Certification: ${form.license}` : null,
-      form.website            ? `Website / LinkedIn: ${form.website}` : null,
-      form.areas_of_support.length ? `Areas of Support: ${form.areas_of_support.join(", ")}` : null,
-      form.session_format.length   ? `Session Format: ${form.session_format.join(", ")}` : null,
-      "---",
-      form.bio.trim(),
-    ].filter(Boolean).join("\n");
-
+    // Upsert — avoids duplicate rows for the same user
     const { error: err } = await supabase
-      .from("peer_guide_profiles")
-      .insert({
-        user_id:                     session.user.id,
-        bio:                         structuredBio,
-        languages_spoken:            form.languages_spoken,
-        is_available:                form.is_available,
-        session_rate_inr:            form.session_rate_inr
-                                       ? parseInt(form.session_rate_inr, 10)
-                                       : null,
-        photo_url,
-        is_approved_by_admin:        false,
-      });
+      .from("practitioner_profiles")
+      .upsert(
+        {
+          user_id:              session.user.id,
+          specialisation:       form.specialisation.trim(),
+          credentials:          form.credentials.trim() || null,
+          years_experience:     form.years_experience || null,
+          professional_bio:     form.professional_bio.trim(),
+          session_formats:      form.session_formats.length ? form.session_formats : null,
+          languages_spoken:     form.languages_spoken.length ? form.languages_spoken : null,
+          session_rate_inr:     form.session_rate_inr ? parseInt(form.session_rate_inr, 10) : null,
+          city_state:           form.city_state.trim() || null,
+          is_available:         form.is_available,
+          is_verified_by_admin: false,
+          ...(profile_photo_url && { profile_photo_url }),
+        },
+        { onConflict: "user_id" }
+      );
 
     setLoading(false);
 
@@ -419,21 +425,23 @@ export default function BecomeAProfessional() {
 
           {/* LEFT */}
           <div className="guide-left">
-            <div className="gl-label">Apply as a Professional</div>
-            <h2>Support people navigating separation.</h2>
+            <div className="gl-label">For Professionals</div>
+            <h2>Guide toward their<br />next chapter.</h2>
             <p className="gl-sub">
-              From Broken to Better invites therapists, counselors, and trained professionals to guide people who are rebuilding their lives after separation.
+              Many people navigating separation benefit from speaking with trained professionals.<br /><br />
+              From Broken To Better invites therapists, counselors, and practitioners who support people through major life transitions.<br /><br />
+              Your role is not to fix people, but to help them reflect, rebuild, and move forward.
             </p>
 
             <div className="guide-traits">
-              {TRAITS.map(t => (
-                <div className="guide-trait" key={t.n}>
-                  <span className="gt-num">{t.n}</span>
+              {STEPS.map(s => (
+                <div className="guide-trait" key={s.n}>
+                  <span className="gt-num">{s.n}</span>
                   <span className="gt-text">
                     <strong style={{ display: "block", color: "#e8d8cc", fontWeight: 400, marginBottom: 4 }}>
-                      {t.title}
+                      {s.title}
                     </strong>
-                    {t.text}
+                    {s.text}
                   </span>
                 </div>
               ))}
@@ -452,7 +460,7 @@ export default function BecomeAProfessional() {
                 <h3>Application received.</h3>
                 <p>
                   Thank you for applying.<br />
-                  Our team will review your application and reach out within 72 hours.
+                  Our team will review your profile and reach out within 72 hours.
                 </p>
                 <button
                   className="guide-btn"
@@ -464,91 +472,114 @@ export default function BecomeAProfessional() {
             ) : (
               <form onSubmit={onSubmit}>
 
-                {/* SECTION 1 — Professional Information */}
-                <div className="gf-section-head">Professional Information</div>
+                {/* Basics */}
+                <div className="gf-section-head">Your Details</div>
+
+                <div className="gf-row">
+                  <div className="gf-group">
+                    <label>Full Name</label>
+                    <input
+                      type="text"
+                      name="full_name"
+                      value={form.full_name}
+                      onChange={onChange}
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div className="gf-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      disabled
+                    />
+                    <div className="gf-hint">From your account.</div>
+                  </div>
+                </div>
+
+                <div className="gf-row">
+                  <div className="gf-group">
+                    <label>Professional Title</label>
+                    <input
+                      type="text"
+                      name="specialisation"
+                      value={form.specialisation}
+                      onChange={onChange}
+                      placeholder="e.g. Therapist, Counselor, Coach"
+                      required
+                    />
+                  </div>
+                  <div className="gf-group">
+                    <label>
+                      Credentials{" "}
+                      <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="credentials"
+                      value={form.credentials}
+                      onChange={onChange}
+                      placeholder="e.g. MA Psychology, LMFT"
+                    />
+                  </div>
+                </div>
+
+                <div className="gf-row">
+                  <div className="gf-group">
+                    <label>Years of Experience</label>
+                    <select name="years_experience" value={form.years_experience} onChange={onChange}>
+                      <option value="">Select</option>
+                      <option value="0–3 years">0–3 years</option>
+                      <option value="3–6 years">3–6 years</option>
+                      <option value="6–9 years">6–9 years</option>
+                      <option value="9+ years">9+ years</option>
+                    </select>
+                  </div>
+                  <div className="gf-group">
+                    <label>City / Location</label>
+                    <input
+                      type="text"
+                      name="city_state"
+                      value={form.city_state}
+                      onChange={onChange}
+                      placeholder="e.g. Mumbai, Delhi"
+                    />
+                  </div>
+                </div>
+
+                {/* Bio */}
+                <div className="gf-section-head">Your Approach</div>
 
                 <div className="gf-group">
-                  <label>Full Name</label>
-                  <input
-                    type="text"
-                    name="full_name"
-                    value={form.full_name}
+                  <label>Professional Bio</label>
+                  <textarea
+                    name="professional_bio"
+                    value={form.professional_bio}
                     onChange={onChange}
-                    placeholder="Your full name"
+                    placeholder="Briefly describe your background and the kind of guidance you offer to people navigating life transitions."
                     required
                   />
                 </div>
 
-                <div className="gf-group">
-                  <label>Professional Title</label>
-                  <input
-                    type="text"
-                    name="professional_title"
-                    value={form.professional_title}
-                    onChange={onChange}
-                    placeholder="e.g. Therapist, Psychologist, Counselor, Relationship Coach"
-                    required
-                  />
-                </div>
+                {/* Session details */}
+                <div className="gf-section-head">Session Details</div>
 
                 <div className="gf-group">
-                  <label>Years of Experience</label>
-                  <select name="years_of_experience" value={form.years_of_experience} onChange={onChange}>
-                    <option value="">Select one</option>
-                    <option value="1–3 years">1–3 years</option>
-                    <option value="3–5 years">3–5 years</option>
-                    <option value="5–10 years">5–10 years</option>
-                    <option value="10+ years">10+ years</option>
-                  </select>
-                </div>
-
-                <div className="gf-group">
-                  <label>License or Certification</label>
-                  <input
-                    type="text"
-                    name="license"
-                    value={form.license}
-                    onChange={onChange}
-                    placeholder="e.g. RCI Licensed, BACP Accredited"
-                  />
-                </div>
-
-                <div className="gf-group">
-                  <label>
-                    Professional Website or LinkedIn{" "}
-                    <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>
-                      (optional)
-                    </span>
-                  </label>
-                  <input
-                    type="url"
-                    name="website"
-                    value={form.website}
-                    onChange={onChange}
-                    placeholder="https://"
-                  />
-                </div>
-
-                {/* SECTION 2 — Areas of Support */}
-                <div className="gf-section-head">Areas of Support</div>
-
-                <div className="gf-group">
-                  <div className="gf-checks-col">
-                    {AREAS.map(area => (
-                      <label className="gf-check" key={area}>
+                  <label>Session Format</label>
+                  <div className="gf-checks">
+                    {SESSION_FORMATS.map(fmt => (
+                      <label className="gf-check" key={fmt}>
                         <input
                           type="checkbox"
-                          checked={form.areas_of_support.includes(area)}
-                          onChange={() => toggleList("areas_of_support", area)}
+                          checked={form.session_formats.includes(fmt)}
+                          onChange={() => toggleList("session_formats", fmt)}
                         />
-                        {area}
+                        {fmt}
                       </label>
                     ))}
                   </div>
                 </div>
-
-                {/* SECTION 3 — Session Details */}
-                <div className="gf-section-head">Session Details</div>
 
                 <div className="gf-group">
                   <label>Languages You Can Support In</label>
@@ -566,81 +597,48 @@ export default function BecomeAProfessional() {
                   </div>
                 </div>
 
-                <div className="gf-group">
-                  <label>Session Format</label>
-                  <div className="gf-checks">
-                    {SESSION_FORMATS.map(fmt => (
-                      <label className="gf-check" key={fmt}>
+                <div className="gf-row">
+                  <div className="gf-group">
+                    <label>
+                      Session Rate{" "}
+                      <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>(₹ per session)</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="session_rate_inr"
+                      value={form.session_rate_inr}
+                      onChange={onChange}
+                      placeholder="e.g. 1500"
+                      min="0"
+                    />
+                  </div>
+                  <div className="gf-group">
+                    <label>Availability</label>
+                    <div className="gf-toggle-row">
+                      <span className="gf-toggle-label">
+                        {form.is_available ? "Available" : "Not available"}
+                      </span>
+                      <label className="gf-toggle">
                         <input
                           type="checkbox"
-                          checked={form.session_format.includes(fmt)}
-                          onChange={() => toggleList("session_format", fmt)}
+                          checked={form.is_available}
+                          onChange={e =>
+                            setForm(prev => ({ ...prev, is_available: e.target.checked }))
+                          }
                         />
-                        {fmt}
+                        <span className="gf-toggle-slider" />
                       </label>
-                    ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="gf-group">
-                  <label>
-                    Session Rate{" "}
-                    <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>
-                      (₹ per session)
-                    </span>
-                  </label>
-                  <input
-                    type="number"
-                    name="session_rate_inr"
-                    value={form.session_rate_inr}
-                    onChange={onChange}
-                    placeholder="e.g. 1500"
-                    min="0"
-                  />
-                </div>
-
-                <div className="gf-group">
-                  <label>Availability</label>
-                  <div className="gf-toggle-row">
-                    <span className="gf-toggle-label">
-                      {form.is_available
-                        ? "Available to take sessions"
-                        : "Not available right now"}
-                    </span>
-                    <label className="gf-toggle">
-                      <input
-                        type="checkbox"
-                        checked={form.is_available}
-                        onChange={e =>
-                          setForm(prev => ({ ...prev, is_available: e.target.checked }))
-                        }
-                      />
-                      <span className="gf-toggle-slider" />
-                    </label>
-                  </div>
-                  <div className="gf-hint">You can update this anytime from your profile.</div>
-                </div>
-
-                {/* SECTION 4 — Profile */}
-                <div className="gf-section-head">Profile</div>
-
-                <div className="gf-group">
-                  <label>Professional Bio</label>
-                  <textarea
-                    name="bio"
-                    value={form.bio}
-                    onChange={onChange}
-                    placeholder="Briefly describe your background and the kind of guidance you offer."
-                    required
-                  />
-                </div>
+                {/* Photo */}
+                <div className="gf-section-head">Profile Photo</div>
 
                 <div className="gf-group">
                   <label>
-                    Profile Photo{" "}
-                    <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>
-                      (optional)
-                    </span>
+                    Photo{" "}
+                    <span style={{ fontWeight: 300, textTransform: "none", fontSize: 9, color: "#b8a898" }}>(optional)</span>
                   </label>
                   <label className="gf-file-label">
                     <input
@@ -655,7 +653,7 @@ export default function BecomeAProfessional() {
                       {form.photo ? form.photo.name : "Click to upload a photo"}
                     </span>
                   </label>
-                  <div className="gf-hint">JPG or PNG. Shown on your profile card.</div>
+                  <div className="gf-hint">JPG or PNG. Shown on your profile.</div>
                 </div>
 
                 {error && <p className="guide-error">{error}</p>}
