@@ -462,7 +462,7 @@ export default function LandingPage({ onStart }) {
               }}>
                 Therapists, counselors, and other trained professionals who offer structured guidance and support for those who want deeper help.
               </p>
-              <Link to="/become-a-guide" className="role-card-link">
+              <Link to="/apply-as-professional" className="role-card-link">
                 Apply as a Professional →
               </Link>
             </div>
