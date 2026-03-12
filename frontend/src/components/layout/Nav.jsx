@@ -20,8 +20,10 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 48px;
+    padding: 14px 24px;
     gap: 48px;
+    max-width: 1180px;
+    margin: 0 auto;
   }
 
   .nav-logo {
